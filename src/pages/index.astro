@@ -1,0 +1,123 @@
+---
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+import "../styles/global.css";
+import { Code, Link, LinkButton, Text } from "@cloudflare/kumo";
+import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
+import Hero from "../components/Hero.astro";
+
+const title = "Whiteheap · tools and infra for the agent era";
+const description =
+  "Whiteheap builds open-source tools and infrastructure for agents, developers and security teams.";
+const url = "https://whiteheap.com/";
+const organization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Whiteheap",
+  url,
+  logo: "https://whiteheap.com/apple-touch-icon.png",
+  description,
+  sameAs: ["https://github.com/whiteheap", "https://x.com/whiteheaphq"],
+};
+---
+
+<!doctype html>
+<html lang="en" data-mode="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Whiteheap" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content="https://whiteheap.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@whiteheaphq" />
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
+  </head>
+  <body>
+    <header class="site-header wrap">
+      <a class="wordmark" href="/" aria-label="Whiteheap home">
+        <svg viewBox="0 0 18 18" aria-hidden="true">
+          <rect x="0" y="0" width="8" height="8" fill="currentColor"></rect>
+          <rect x="10" y="0" width="8" height="8" fill="currentColor"></rect>
+          <rect x="10" y="10" width="8" height="8" fill="currentColor"></rect>
+          <rect x="1" y="11" width="2" height="2" fill="currentColor"></rect>
+          <rect x="5" y="15" width="2" height="2" fill="currentColor"></rect>
+        </svg>
+        whiteheap
+      </a>
+      <nav aria-label="Whiteheap elsewhere">
+        <LinkButton href="https://github.com/whiteheap" variant="ghost" icon={GithubLogoIcon}>
+          GitHub
+        </LinkButton>
+        <LinkButton
+          href="https://x.com/whiteheaphq"
+          variant="ghost"
+          shape="square"
+          icon={XLogoIcon}
+          aria-label="Whiteheap on X"
+        />
+      </nav>
+    </header>
+
+    <main>
+      <Hero />
+
+      <section class="section wrap split" aria-labelledby="mission">
+        <h2 id="mission" class="label">mission</h2>
+        <div class="prose">
+          <Text size="lg">
+            Agents now write code, run commands and hold credentials on real machines. Most of the
+            tools around them were built for one person at a keyboard.
+          </Text>
+          <Text size="lg">
+            Whiteheap builds open-source tools and infrastructure for that shift: for the agents,
+            for the developers who run them, and for the security teams who answer for what they
+            do.
+          </Text>
+          <ul class="principles">
+            <li>One job per tool.</li>
+            <li>Command line first. Installs with Homebrew on macOS and Linux.</li>
+            <li>Open source.</li>
+            <li>
+              Each tool says what it checked, what it could not see, and the exact platforms it was
+              tested on.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section wrap split" aria-labelledby="tools">
+        <h2 id="tools" class="label">tools</h2>
+        <div class="tool">
+          <h3><Link href="https://github.com/whiteheap/residue" variant="current">residue</Link></h3>
+          <p>
+            Finds the Git worktrees coding agents leave behind, and removes one only when nothing in
+            it would be lost.
+          </p>
+          <div class="command"><Code code="brew install whiteheap/tap/residue" /></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer wrap">
+      <span>&copy; 2026 Whiteheap</span>
+      <nav aria-label="Footer">
+        <a href="https://github.com/whiteheap">GitHub</a>
+        <a href="https://x.com/whiteheaphq">X</a>
+        <a href="https://github.com/whiteheap/residue">residue</a>
+      </nav>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+---
+import { LinkButton } from "@cloudflare/kumo";
+import { GithubLogoIcon } from "@phosphor-icons/react";
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <canvas class="hero-field" aria-hidden="true" data-hero-field></canvas>
+  <div class="hero-content wrap">
+    <h1 id="hero-title" class="hero-title">tools and infra for the agent era</h1>
+    <LinkButton href="https://github.com/whiteheap" variant="secondary" icon={GithubLogoIcon}>
+      github.com/whiteheap
+    </LinkButton>
+  </div>
+</section>
+
+<script>
+  import { start } from "../scripts/hero-field";
+
+  const canvas = document.querySelector<HTMLCanvasElement>("[data-hero-field]");
+  if (canvas) start(canvas);
+</script>
