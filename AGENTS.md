@@ -21,7 +21,7 @@ Open the preview at 1440x900 and at 390x844. Check for console errors: the Conte
 
 ## Deploy
 
-`pnpm run deploy` uploads `dist/` to the Cloudflare Pages project `whiteheap`. It needs `npx wrangler login` or a `CLOUDFLARE_API_TOKEN`.
+`pnpm run deploy` builds the site, uploads `dist/` to the Worker `whiteheap` (static assets only, custom domain whiteheap.com, set in `wrangler.jsonc`) and deploys the www redirect in `www/`. It needs `npx wrangler login` or a `CLOUDFLARE_API_TOKEN`. Keep the `whiteheap` Worker script-free: a script would run on every request, count toward Worker request limits, and stop `_headers` applying to the responses it returns.
 
 ## Astro
 

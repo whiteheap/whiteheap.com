@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "astro build && wrangler pages deploy dist --project-name whiteheap --branch main"
+    "deploy": "astro build && wrangler deploy && wrangler deploy --config www/wrangler.jsonc"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.4",
