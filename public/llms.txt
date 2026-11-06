@@ -1,10 +1,12 @@
 # Whiteheap
 
-> Open-source tools and infrastructure for agents, developers and security teams.
+> Open-source tools and infrastructure for agents, developers and security teams, all written in Rust.
+
+Each tool is one binary with no runtime to install. Every release carries SHA-256 checksums and a GitHub build-provenance attestation (`gh attestation verify <file> --repo whiteheap/<tool>`).
 
 ## Tools
 
-- [residue](https://github.com/whiteheap/residue): finds the Git worktrees coding agents leave behind, and removes one only when nothing in it would be lost. Install: `brew install whiteheap/tap/residue`
+- [residue](https://github.com/whiteheap/residue): finds the Git worktrees coding agents leave behind, and removes one only when nothing in it would be lost. One Rust binary with one dependency (`libc`), for macOS and Linux. Install: `brew install whiteheap/tap/residue`
 
 ## Links
 
