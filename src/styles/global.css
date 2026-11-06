@@ -112,8 +112,10 @@
     }
   }
 
-  /* The field and the tagline share one grid cell. On a short screen (a
-     phone held sideways) the hero never runs past the fold. */
+  /* The field and the tagline share one grid cell. On a portrait screen the
+     field sits over the tagline and the mission starts just below. svh, not
+     dvh: a hero that resized as a phone's toolbar slides away would lay the
+     field out again mid-scroll. */
   .hero {
     container: hero / size;
     display: grid;
@@ -124,18 +126,32 @@
     overflow: clip;
   }
 
+  /* On a landscape screen the header and the hero fill the first screen,
+     so the grid sits centered with no empty band below it. */
+  @media (min-aspect-ratio: 1 / 1) {
+    .hero {
+      block-size: clamp(18rem, 100svh - var(--header-block), 90rem);
+    }
+  }
+
   .hero > * {
     grid-area: 1 / 1;
   }
 
+  /* The field fades in under the header and out into the page, so its
+     dust never stops on a hard line. The tiles sit inside the middle 86%. */
   .hero-field {
     display: block;
     inline-size: 100%;
     block-size: 100%;
     image-rendering: pixelated;
+    mask-image: linear-gradient(to bottom, transparent, black 5%, black 94%, transparent);
   }
 
+  /* Positioned, so it paints above the masked canvas: a mask makes the
+     canvas a stacking context, which paints over unpositioned siblings. */
   .hero-content {
+    position: relative;
     display: grid;
     align-content: center;
     justify-items: start;
