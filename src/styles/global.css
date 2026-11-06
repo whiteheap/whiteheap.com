@@ -166,20 +166,6 @@
     }
   }
 
-  .hero-heading {
-    display: grid;
-    gap: 0.5rem;
-    margin: 0;
-  }
-
-  .hero-note {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1.0625rem);
-    line-height: 1.5;
-    color: var(--muted);
-  }
-
   .hero-title {
     margin: 0;
     font-family: var(--font-mono);
