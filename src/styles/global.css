@@ -26,6 +26,8 @@
     /* 18px at 320px wide, 32px at 1440px. */
     --text-hero: clamp(1.125rem, 0.875rem + 1.25vw, 2rem);
     --space-section: clamp(4rem, 2.5rem + 6vw, 8rem);
+    /* The header: 1rem of padding above and below a 2.25rem button row. */
+    --header-block: 4.25rem;
 
     scrollbar-gutter: stable;
     text-wrap: pretty;
@@ -71,7 +73,8 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding-block: 1rem;
+    box-sizing: border-box;
+    block-size: var(--header-block);
   }
 
   .site-header nav {
@@ -109,11 +112,15 @@
     }
   }
 
-  /* The field and the tagline share one grid cell. */
+  /* The field and the tagline share one grid cell. On a short screen (a
+     phone held sideways) the hero never runs past the fold. */
   .hero {
     container: hero / size;
     display: grid;
-    block-size: clamp(30rem, 78svh, 54rem);
+    /* One track the size of the hero: an auto track would grow to the
+       canvas's intrinsic aspect ratio and push it past the fold. */
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    block-size: clamp(min(30rem, 100svh - var(--header-block)), 78svh, 54rem);
     overflow: clip;
   }
 

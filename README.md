@@ -25,7 +25,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | --- | --- |
 | `src/pages/index.astro` | The page: copy, links and meta tags |
 | `src/components/Hero.astro` | The hero: canvas, tagline and GitHub link |
-| `src/scripts/hero-field.ts` | The hero animation: a grid of tiles that breaks into drifting particles, drawn in black and white at 15 fps. It stops while off screen and draws one still frame for readers who prefer reduced motion. |
+| `src/scripts/hero-field.ts` | The hero animation: a grid of tiles that breaks into drifting particles, drawn in black and white on every display frame (60 Hz, 120 Hz or more where the browser allows), with all static work done once per size. It stops while off screen and draws one still frame for readers who prefer reduced motion. |
 | `src/styles/global.css` | Tokens, reset and layout. Kumo's Tailwind styles are imported first. |
 | `brand/` | The Whiteheap logo kit: clean and textured marks, the original X avatar, exports up to 4096 px, and `CLAUDE-HANDOFF.md`, which explains each file. |
 | `public/logo-header.png` | The header mark: `brand/header-logo-textured.svg` rendered at 3x (123x96). The SVG is 449 KB of particles, too heavy for a 32 px logo. |
