@@ -2,8 +2,6 @@
 
 > Open-source tools and infrastructure for agents, developers and security teams.
 
-Each tool does one job, runs from the command line, installs with Homebrew on macOS and Linux, and says what it checked, what it could not see, and the exact platforms it was tested on.
-
 ## Tools
 
 - [residue](https://github.com/whiteheap/residue): finds the Git worktrees coding agents leave behind, and removes one only when nothing in it would be lost. Install: `brew install whiteheap/tap/residue`

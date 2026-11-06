@@ -94,8 +94,8 @@
 
   .wordmark svg {
     flex: none;
-    inline-size: 1.125rem;
-    block-size: 1.125rem;
+    inline-size: auto;
+    block-size: 1.25rem;
   }
 
   .wordmark:active {
@@ -195,35 +195,6 @@
     color: var(--fg);
   }
 
-  .principles {
-    display: grid;
-    gap: 0.75rem;
-    margin: 0;
-    margin-block-start: 0.75rem;
-    padding: 0;
-    list-style: none;
-    font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    line-height: 1.55;
-    color: var(--muted);
-  }
-
-  .principles li {
-    display: flex;
-    align-items: baseline;
-    gap: 0.875rem;
-  }
-
-  /* A tile from the hero grid as the bullet. */
-  .principles li::before {
-    content: "";
-    flex: none;
-    inline-size: 0.5em;
-    block-size: 0.5em;
-    background: var(--fg);
-    translate: 0 -0.1em;
-  }
-
   .tool {
     display: grid;
     gap: 0.75rem;
@@ -241,15 +212,6 @@
     margin: 0;
     line-height: 1.6;
     color: var(--muted);
-  }
-
-  .command {
-    justify-self: start;
-    max-inline-size: 100%;
-    padding: 0.625rem 0.875rem;
-    border: 1px solid var(--line);
-    border-radius: 0.5rem;
-    overflow-x: auto;
   }
 
   .site-footer {

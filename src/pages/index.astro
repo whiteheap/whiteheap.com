@@ -2,9 +2,10 @@
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "../styles/global.css";
-import { Code, Link, LinkButton, Text } from "@cloudflare/kumo";
+import { LinkButton, Text } from "@cloudflare/kumo";
 import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 import Hero from "../components/Hero.astro";
+import { markHeight, markRects, markWidth } from "../lib/mark";
 
 const title = "Whiteheap · tools and infra for the agent era";
 const description =
@@ -48,13 +49,13 @@ const organization = {
   <body>
     <header class="site-header wrap">
       <a class="wordmark" href="/" aria-label="Whiteheap home">
-        <svg viewBox="0 0 18 18" aria-hidden="true">
-          <rect x="0" y="0" width="8" height="8" fill="currentColor"></rect>
-          <rect x="10" y="0" width="8" height="8" fill="currentColor"></rect>
-          <rect x="10" y="10" width="8" height="8" fill="currentColor"></rect>
-          <rect x="1" y="11" width="2" height="2" fill="currentColor"></rect>
-          <rect x="5" y="15" width="2" height="2" fill="currentColor"></rect>
-        </svg>
+        <svg
+          viewBox={`0 0 ${markWidth} ${markHeight}`}
+          width={markWidth}
+          height={markHeight}
+          aria-hidden="true"
+          set:html={markRects("currentColor")}
+        />
         whiteheap
       </a>
       <nav aria-label="Whiteheap elsewhere">
@@ -86,27 +87,26 @@ const organization = {
             for the developers who run them, and for the security teams who answer for what they
             do.
           </Text>
-          <ul class="principles">
-            <li>One job per tool.</li>
-            <li>Command line first. Installs with Homebrew on macOS and Linux.</li>
-            <li>Open source.</li>
-            <li>
-              Each tool says what it checked, what it could not see, and the exact platforms it was
-              tested on.
-            </li>
-          </ul>
         </div>
       </section>
 
       <section class="section wrap split" aria-labelledby="tools">
         <h2 id="tools" class="label">tools</h2>
         <div class="tool">
-          <h3><Link href="https://github.com/whiteheap/residue" variant="current">residue</Link></h3>
+          <h3>residue</h3>
           <p>
             Finds the Git worktrees coding agents leave behind, and removes one only when nothing in
             it would be lost.
           </p>
-          <div class="command"><Code code="brew install whiteheap/tap/residue" /></div>
+          <div>
+            <LinkButton
+              href="https://github.com/whiteheap/residue"
+              variant="secondary"
+              icon={GithubLogoIcon}
+            >
+              github.com/whiteheap/residue
+            </LinkButton>
+          </div>
         </div>
       </section>
     </main>

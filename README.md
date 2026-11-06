@@ -27,6 +27,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `src/components/Hero.astro` | The hero: canvas, tagline and GitHub link |
 | `src/scripts/hero-field.ts` | The hero animation: a grid of tiles that breaks into drifting particles, drawn in black and white at 15 fps. It stops while off screen and draws one still frame for readers who prefer reduced motion. |
 | `src/styles/global.css` | Tokens, reset and layout. Kumo's Tailwind styles are imported first. |
+| `src/lib/mark.ts` | The Whiteheap mark (the tile heap from the X avatar). The header logo and `/favicon.svg` (`src/pages/favicon.svg.ts`) both draw from it. |
 | `wrangler.jsonc` | The site Worker: the assets directory and the whiteheap.com custom domain |
 | `www/` | The Worker that redirects www.whiteheap.com to whiteheap.com |
 | `public/_headers` | Security and cache headers, applied by Cloudflare to every asset response. Astro adds the Content Security Policy as a `<meta>` tag at build time. |
