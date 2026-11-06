@@ -7,6 +7,7 @@ One static page. Astro builds it; React renders the Kumo components at build tim
 - Keep the page static. Adding a `client:*` directive ships React's runtime (about 68 KB gzipped) for one component; avoid it unless the page truly needs interactivity.
 - Use Kumo components (`@cloudflare/kumo`) and Phosphor icons. Kumo props differ from their names: `Code` takes `code="..."`, not children; `Link variant="current"` inherits the text color.
 - The page is black and white. Do not add a color accent.
+- The logo comes from `brand/` (the kit Trevor supplied; `brand/CLAUDE-HANDOFF.md` explains each file). Never redraw the mark. The header uses the textured mark as `public/logo-header.png`; the favicon stays the clean mark for legibility.
 - Copy is plain and specific. No emojis.
 - Every claim about a tool must match that tool's own README.
 

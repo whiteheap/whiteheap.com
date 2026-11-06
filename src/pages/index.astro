@@ -5,7 +5,6 @@ import "../styles/global.css";
 import { LinkButton, Text } from "@cloudflare/kumo";
 import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 import Hero from "../components/Hero.astro";
-import { markHeight, markRects, markWidth } from "../lib/mark";
 
 const title = "Whiteheap · tools and infra for the agent era";
 const description =
@@ -49,13 +48,7 @@ const organization = {
   <body>
     <header class="site-header wrap">
       <a class="wordmark" href="/" aria-label="Whiteheap home">
-        <svg
-          viewBox={`0 0 ${markWidth} ${markHeight}`}
-          width={markWidth}
-          height={markHeight}
-          aria-hidden="true"
-          set:html={markRects("currentColor")}
-        />
+        <img src="/logo-header.png" alt="" width="41" height="32" />
         whiteheap
       </a>
       <nav aria-label="Whiteheap elsewhere">

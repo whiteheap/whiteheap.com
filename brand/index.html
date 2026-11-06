@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Whiteheap logo kit</title>
+<style>
+  :root { --bg:#fff; --fg:#000; --muted:#666; --line:#eaeaea; --card:#fafafa; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#000; --fg:#ededed; --muted:#888; --line:#333; --card:#111; } }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--fg); font-family:"Geist",ui-sans-serif,system-ui,sans-serif; line-height:1.5; }
+  .wrap { max-width:980px; margin:0 auto; padding:48px 24px 96px; }
+  h1 { font-size:28px; font-weight:600; letter-spacing:-0.02em; margin:0 0 8px; }
+  h2 { font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin:40px 0 16px; }
+  p { color:var(--muted); font-size:14px; }
+  .lead { font-size:15px; max-width:68ch; }
+  .banner { border:1px solid var(--line); padding:12px 14px; font-size:13px; margin:16px 0 28px; background:var(--card); }
+  .trio { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:800px){ .trio { grid-template-columns:1fr; } }
+  .card { border:1px solid var(--line); background:#000; color:#fff; padding:14px; min-height:220px; display:flex; flex-direction:column; gap:10px; }
+  .card.light { background:#fff; color:#000; }
+  .preview { flex:1; display:flex; align-items:center; justify-content:center; min-height:140px; }
+  .preview img,.preview svg { max-width:160px; max-height:160px; width:100%; height:auto; }
+  .label { font-size:11px; opacity:.7; font-family:ui-monospace,Menlo,monospace; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
+  .row { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  button,.btn { appearance:none; border:1px solid var(--line); background:var(--bg); color:var(--fg); font:inherit; font-size:12px; padding:6px 10px; cursor:pointer; text-decoration:none; display:inline-flex; }
+  select { font:inherit; font-size:12px; border:1px solid var(--line); background:var(--bg); color:var(--fg); padding:6px 8px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { border-top:1px solid var(--line); padding:10px 8px; text-align:left; }
+  code { font-family:ui-monospace,Menlo,monospace; font-size:12px; }
+  footer { margin-top:48px; padding-top:24px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Whiteheap logo kit</h1>
+  <p class="lead">Clean geometric SVG <strong>and</strong> the X distressed grain/spray effect. Exact originals vs particle recreation are labeled clearly.</p>
+  <div class="banner">Offline-capable for clean SVG exports. Textured scalable SVG is loaded from file (not inlined). No network fonts required (Geist if local).</div>
+
+  <h2>Side by side — original / clean / textured effect</h2>
+  <div class="trio">
+    <div class="card"><div class="preview"><img src="x-textured-original-1024.png" alt="X original" width="160" height="160"/></div><div class="label">X ORIGINAL — exact raster 1024</div></div>
+    <div class="card"><div class="preview" id="pv-clean"></div><div class="label">CLEAN vector</div></div>
+    <div class="card"><div class="preview"><img src="exports/whiteheap-avatar-textured-scalable-1024.png" alt="Textured scalable render" width="160" height="160"/></div><div class="label">TEXTURED scalable render (particles)</div></div>
+  </div>
+  <p style="margin-top:12px"><img src="exports/preview-original-clean-textured.jpg" alt="compare strip" style="max-width:100%;border:1px solid var(--line)"/></p>
+
+  <h2>Download — X textured (the effect)</h2>
+  <div class="row">
+    <a class="btn" href="x-textured-original-1024.jpg">exact JPG 1024</a>
+    <a class="btn" href="x-textured-original-1024.png">exact PNG 1024</a>
+    <a class="btn" href="x-textured-original-400.jpg">exact JPG 400</a>
+    <a class="btn" href="x-textured-original-1024.raster.svg">raster-embedded SVG</a>
+    <a class="btn" href="whiteheap-avatar-textured-scalable.svg">textured scalable SVG</a>
+    <a class="btn" href="exports/whiteheap-avatar-textured-scalable-1024.png">tex PNG 1024</a>
+    <a class="btn" href="exports/whiteheap-avatar-textured-scalable-2048.png">tex PNG 2048</a>
+    <a class="btn" href="exports/whiteheap-avatar-textured-scalable-4096.png">tex PNG 4096</a>
+    <a class="btn" href="header-logo-textured.svg">header textured (opt)</a>
+    <a class="btn" href="og-textured-optional.png">og textured (opt)</a>
+  </div>
+
+  <h2>Export PNG from SVG files</h2>
+  <div class="row">
+    <select id="src">
+      <option value="whiteheap-avatar-textured-scalable.svg">textured scalable</option>
+      <option value="whiteheap-avatar-white-on-black.svg">clean avatar</option>
+      <option value="whiteheap-mark-white.svg">clean white mark</option>
+      <option value="whiteheap-mark-master.svg">clean black mark</option>
+      <option value="header-logo-textured.svg">header textured</option>
+    </select>
+    <button type="button" data-size="1024">1024</button>
+    <button type="button" data-size="2048">2048</button>
+    <button type="button" data-size="4096">4096</button>
+  </div>
+
+  <h2>Clean previews</h2>
+  <div class="grid">
+    <div class="card light"><div class="preview" id="pv-black"></div><div class="label">black on transparent</div></div>
+    <div class="card"><div class="preview" id="pv-white"></div><div class="label">white on transparent</div></div>
+    <div class="card"><div class="preview" id="pv-header"></div><div class="label">header clean</div></div>
+    <div class="card light"><div class="preview" id="pv-lockup"></div><div class="label">header lockup</div></div>
+    <div class="card"><div class="preview" id="pv-favicon"></div><div class="label">favicon clean</div></div>
+  </div>
+
+  <h2>Clean downloads + kit</h2>
+  <div class="row">
+    <a class="btn" href="whiteheap-mark-master.svg">master.svg</a>
+    <a class="btn" href="header-logo.svg">header-logo.svg</a>
+    <a class="btn" href="header-logo-lockup.svg">lockup.svg</a>
+    <a class="btn" href="favicon.svg">favicon.svg</a>
+    <a class="btn" href="apple-touch-icon.png">apple-touch 180</a>
+    <a class="btn" href="og.png">og.png (clean)</a>
+    <a class="btn" href="CLAUDE-HANDOFF.md">CLAUDE-HANDOFF.md</a>
+    <a class="btn" href="whiteheap-logo-kit.zip">full zip</a>
+  </div>
+
+  <h2>Notes</h2>
+  <table>
+    <tr><td><code>x-textured-original-*</code></td><td>EXACT X rasters (native sizes). Grain is real.</td></tr>
+    <tr><td><code>*.raster.svg</code></td><td>Embedded PNG — not infinitely scalable / not pure vector.</td></tr>
+    <tr><td><code>whiteheap-avatar-textured-scalable.svg</code></td><td>Particle dither recreation — scalable approx, not pixel-exact.</td></tr>
+    <tr><td><code>favicon / apple / og.png</code></td><td>Stay clean for readability (optional textured og/header separate).</td></tr>
+  </table>
+  <footer>Exact X grain = ORIGINAL files only. Scalable textured = particles, no gradients. See CLAUDE-HANDOFF.md.</footer>
+</div>
+<script>
+const EMBED = {
+  master: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 99 69\" role=\"img\" aria-label=\"Whiteheap logo\">\n  <!-- Clean geometric reconstruction of @whiteheaphq X avatar mark.\n       Grid: tiers 5/7/11 cols \u00d7 2 rows; CELL=7 GUTTER=1 TIER_GAP=6.\n       Flat fills only. Grain/stipple from original raster NOT preserved. -->\n  <g fill=\"#000000\">\n    <rect x=\"30\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"6\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"14\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"78\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"86\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"6\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"14\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"78\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"86\" y=\"56\" width=\"7\" height=\"7\"/>\n  </g>\n</svg>\n",
+  white: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 99 69\" role=\"img\" aria-label=\"Whiteheap logo\">\n  <!-- Clean geometric reconstruction of @whiteheaphq X avatar mark.\n       Grid: tiers 5/7/11 cols \u00d7 2 rows; CELL=7 GUTTER=1 TIER_GAP=6.\n       Flat fills only. Grain/stipple from original raster NOT preserved. -->\n  <g fill=\"#FFFFFF\">\n    <rect x=\"30\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"6\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"14\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"27\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"35\" width=\"7\" height=\"7\"/>\n    <rect x=\"6\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"14\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"78\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"86\" y=\"48\" width=\"7\" height=\"7\"/>\n    <rect x=\"6\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"14\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"22\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"30\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"38\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"46\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"54\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"62\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"70\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"78\" y=\"56\" width=\"7\" height=\"7\"/>\n    <rect x=\"86\" y=\"56\" width=\"7\" height=\"7\"/>\n  </g>\n</svg>\n",
+  avatar: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" role=\"img\" aria-label=\"Whiteheap\">\n  <rect width=\"100\" height=\"100\" fill=\"#000000\"/>\n  <g fill=\"#FFFFFF\" transform=\"translate(18.0000 29.0345) scale(0.735632)\">\n    <rect x=\"24\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"0\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"8\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"72\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"80\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"0\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"8\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"72\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"80\" y=\"50\" width=\"7\" height=\"7\"/>\n  </g>\n</svg>\n",
+  header: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 87 57\" role=\"img\" aria-hidden=\"true\">\n  <!-- Header mark (pyramid heap). Uses currentColor. Full cell grid. -->\n  <g fill=\"currentColor\">\n    <rect x=\"24\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"0\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"8\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"72\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"80\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"0\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"8\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"72\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"80\" y=\"50\" width=\"7\" height=\"7\"/>\n  </g>\n</svg>\n",
+  lockup: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 129.47 22.0\" role=\"img\" aria-label=\"Whiteheap\">\n  <!-- Lockup matches live site header: mark + lowercase whiteheap. -->\n  <!-- Site font is IBM Plex Mono (CSS mono token), weight 500. Text stays editable. -->\n  <g fill=\"currentColor\" transform=\"translate(0 2.000) scale(0.315789)\">\n    <rect x=\"24\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"0\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"8\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"21\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"29\" width=\"7\" height=\"7\"/>\n    <rect x=\"0\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"8\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"72\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"80\" y=\"42\" width=\"7\" height=\"7\"/>\n    <rect x=\"0\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"8\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"16\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"24\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"32\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"40\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"48\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"56\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"64\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"72\" y=\"50\" width=\"7\" height=\"7\"/>\n    <rect x=\"80\" y=\"50\" width=\"7\" height=\"7\"/>\n  </g>\n  <text x=\"37.47\" y=\"11.35\" fill=\"currentColor\" font-family=\"IBM Plex Mono, ui-monospace, monospace\" font-size=\"16\" font-weight=\"500\" dominant-baseline=\"middle\">whiteheap</text>\n</svg>\n",
+  favicon: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\" role=\"img\" aria-label=\"Whiteheap\">\n  <!-- Favicon simplification: solid tier bars (no per-cell gutters) for legibility at 16\u201332px.\n       Same 5/7/11 stepped silhouette as master mark. Documented intentional simplification. -->\n  <rect width=\"32\" height=\"32\" fill=\"#000\"/>\n  <g fill=\"#fff\">\n    <rect x=\"10\" y=\"5\" width=\"11\" height=\"6\"/>\n    <rect x=\"8\" y=\"13\" width=\"15\" height=\"6\"/>\n    <rect x=\"4\" y=\"21\" width=\"24\" height=\"6\"/>\n  </g>\n</svg>\n",
+};
+function mount(id, svg){ document.getElementById(id).innerHTML = svg; }
+mount("pv-clean", EMBED.avatar);
+mount("pv-black", EMBED.master);
+mount("pv-white", EMBED.white);
+mount("pv-header", EMBED.header);
+mount("pv-lockup", EMBED.lockup);
+mount("pv-favicon", EMBED.favicon);
+
+async function loadSvg(path){
+  const r = await fetch(path);
+  if(!r.ok) throw new Error("fetch "+path);
+  return await r.text();
+}
+function svgToPng(svgText, width, height, filename){
+  const img = new Image();
+  const url = URL.createObjectURL(new Blob([svgText], {type:"image/svg+xml;charset=utf-8"}));
+  img.onload = () => {
+    const c = document.createElement("canvas"); c.width=width; c.height=height;
+    c.getContext("2d").drawImage(img,0,0,width,height);
+    URL.revokeObjectURL(url);
+    c.toBlob(b => { const u=URL.createObjectURL(b); const a=document.createElement("a"); a.href=u; a.download=filename; a.click(); URL.revokeObjectURL(u); }, "image/png");
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); alert("PNG export failed"); };
+  img.src = url;
+}
+document.querySelectorAll("button[data-size]").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const size = parseInt(btn.dataset.size,10);
+    const path = document.getElementById("src").value;
+    try {
+      const svg = await loadSvg(path);
+      let w=size,h=size, name = path.replace(/\.svg$/,"") + "-" + size + ".png";
+      if(path.includes("mark-white") || path.includes("mark-master") || path.includes("mark-black")) {
+        h = Math.round(size*69/99);
+      }
+      if(path.includes("header-logo-textured")) h = Math.round(size*77/99);
+      svgToPng(svg, w, h, name.split("/").pop());
+    } catch(e) { alert(String(e)); }
+  });
+});
+</script>
+</body>
+</html>
