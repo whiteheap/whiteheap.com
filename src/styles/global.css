@@ -162,8 +162,23 @@
   @container hero (aspect-ratio < 23 / 20) {
     .hero-content {
       align-content: end;
-      padding-block-end: clamp(2.5rem, 9cqb, 4.5rem);
+      gap: 1.25rem;
+      padding-block-end: clamp(1.5rem, 6cqb, 4.5rem);
     }
+  }
+
+  .hero-heading {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  .hero-note {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1.0625rem);
+    line-height: 1.5;
+    color: var(--muted);
   }
 
   .hero-title {
