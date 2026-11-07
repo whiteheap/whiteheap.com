@@ -3,7 +3,7 @@ import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "../styles/global.css";
 import { LinkButton, Text } from "@cloudflare/kumo";
-import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
+import { GithubLogoIcon, GlobeIcon, XLogoIcon } from "@phosphor-icons/react";
 import Hero from "../components/Hero.astro";
 
 const title = "Whiteheap · tools and infra for the agentic era";
@@ -99,10 +99,14 @@ const organization = {
         <div class="tool">
           <h3>residue</h3>
           <p>
-            Finds the Git worktrees coding agents leave behind, and removes one only when nothing in
-            it would be lost. One Rust binary with one dependency, for macOS and Linux.
+            Reclaim your storage from Git worktrees, automatically and safely. residue removes a
+            worktree only when nothing in it would be lost, whichever coding agent left it.
           </p>
-          <div>
+          <p>One Rust binary with one dependency, for macOS and Linux.</p>
+          <div class="tool-links">
+            <LinkButton href="https://residue.whiteheap.com" variant="secondary" icon={GlobeIcon}>
+              residue.whiteheap.com
+            </LinkButton>
             <LinkButton
               href="https://github.com/whiteheap/residue"
               variant="secondary"
@@ -120,7 +124,7 @@ const organization = {
       <nav aria-label="Footer">
         <a href="https://github.com/whiteheap">GitHub</a>
         <a href="https://x.com/whiteheaphq">X</a>
-        <a href="https://github.com/whiteheap/residue">residue</a>
+        <a href="https://residue.whiteheap.com">residue</a>
       </nav>
     </footer>
   </body>

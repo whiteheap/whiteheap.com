@@ -8,7 +8,8 @@ One static page. Astro builds it; React renders the Kumo components at build tim
 - Use Kumo components (`@cloudflare/kumo`) and Phosphor icons. Kumo props differ from their names: `Code` takes `code="..."`, not children; `Link variant="current"` inherits the text color.
 - The page is black and white. Do not add a color accent.
 - The logo comes from `brand/` (the kit Trevor supplied; `brand/CLAUDE-HANDOFF.md` explains each file). Never redraw the mark. The header uses the textured mark as `public/logo-header.png`; the favicon stays the clean mark for legibility.
-- Copy is plain and specific. No emojis.
+- Copy follows the Whiteheap [writing style](https://github.com/whiteheap/research/blob/main/standards/writing-style.md): the job first in plain, specific words, each tool in its own terms, and a warning before the action it qualifies. No emojis.
+- A tool's one-line description is its GitHub repository description, word for word (`gh repo view whiteheap/<tool> --json description`). Change it there first, then here and in `public/llms.txt`.
 - Every claim about a tool must match that tool's own README.
 
 ## Verify a change
