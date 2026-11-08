@@ -1,0 +1,28 @@
+---
+// /about, /contact and /privacy: each written in markdown in src/text/,
+// and served as written at /<slug>.md.
+import PageMeta from "../components/PageMeta.astro";
+import Page from "../layouts/Page.astro";
+import { textPage, textPageSlugs } from "../text/pages";
+import type { TextPage } from "../site";
+
+export function getStaticPaths() {
+  return textPageSlugs.map((page) => ({ params: { page } }));
+}
+
+const page = textPage(Astro.params.page as TextPage);
+const title = `Whiteheap · ${page.heading}`;
+---
+
+<Page title={title}>
+  <Fragment slot="head">
+    <PageMeta title={title} description={page.description} path={`/${page.slug}`} markdown={`/${page.slug}.md`} />
+  </Fragment>
+
+  <main class="text-page wrap">
+    <h1 class="hero-title">{page.heading}</h1>
+    <div class="prose">
+      <page.Content />
+    </div>
+  </main>
+</Page>

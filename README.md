@@ -64,7 +64,13 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 
 | Path | What it holds |
 | --- | --- |
-| `src/pages/index.astro` | The page: copy, links, meta tags and the JSON-LD graph, which takes each tool's name, description and website from the same values its card shows |
+| `src/site.ts` | The facts every page and agent file reads: the description, the hero, the homepage prose, each tool, each agent skill and the text pages. Change a fact here and the HTML, `/index.md`, `/agents.md`, the skills, the ARD manifest and the WebMCP tools all follow. `public/llms.txt` is written by hand; the check holds it to the homepage. |
+| `src/pages/index.astro` | The homepage: its sections, meta tags and the JSON-LD graph, which takes each tool's name, description and website from the same values its card shows |
+| `src/pages/[page].astro`, `src/text/` | /about, /contact and /privacy, each written in markdown in `src/text/`. `src/pages/[page].md.ts` serves the same markdown at /about.md and the rest. A new page goes in `textPages` in `src/site.ts` and in the sitemap. |
+| `src/components/PageMeta.astro` | A page's description, canonical, markdown twin, Open Graph and Twitter tags |
+| `src/agents.ts`, `src/pages/index.md.ts`, `src/pages/agents.md.ts` | /index.md, the homepage as markdown, and /agents.md: when an agent should use each tool, how to install it, and where its docs and source are |
+| `src/skills/` | Each tool's agent skill. `src/pages/.well-known/agent-skills/` serves it with its frontmatter, and an index with the SHA-256 of the bytes served; `src/pages/.well-known/ard.json.ts` lists the same skills for Agentic Resource Discovery. |
+| `src/scripts/webmcp.ts` | Two read-only WebMCP tools, `list_whiteheap_tools` and `get_install_command`, registered with `document.modelContext.registerTool` on every page. In a browser without WebMCP it does nothing. |
 | `src/pages/404.astro` | The page for an address that does not exist, served with status 404. It is not in the sitemap and has no canonical. |
 | `src/layouts/Page.astro` | What every page shares: the head basics, icons, header and footer. A page adds its own meta tags in the `head` slot. |
 | `src/components/Hero.astro` | The hero: canvas, tagline and GitHub link |
@@ -83,8 +89,8 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `astro.config.mjs` | Astro's settings. React is registered for the build only: it renders the Kumo components into HTML, and its client runtime is never built. A component that must run in the browser needs `react()` registered instead. |
 | `wrangler.jsonc` | The site Worker: the assets directory, the 404 page for unknown paths, and the whiteheap.com custom domain |
 | `www/` | The Worker that redirects www.whiteheap.com to whiteheap.com |
-| `public/_headers` | Security, cache and text-type headers, applied by Cloudflare to every asset response. Astro adds the Content Security Policy as a `<meta>` tag at build time. |
-| `public/og.png` | The 1200x630 social image: a screenshot of the top of the page. Take it again after changing the hero, and rewrite `ogImageAlt` in `src/pages/index.astro` to say what it shows. |
+| `public/_headers` | Security, cache, text and markdown types, the homepage's Link headers and CORS on the agent discovery files, applied by Cloudflare to every asset response. Astro adds the Content Security Policy as a `<meta>` tag at build time. |
+| `public/og.png` | The 1200x630 social image: a screenshot of the top of the page. Take it again after changing the hero, and rewrite `ogImageAlt` in `src/site.ts` to say what it shows. |
 | `public/robots.txt`, `public/sitemap.xml` | One group that lets every crawler in, and the list of pages. A new page goes in the sitemap, or the check fails. |
 | `public/llms.txt` | A plain-text summary for agents, in the [llmstxt.org](https://llmstxt.org) format |
 | `public/.well-known/security.txt` | How to report a vulnerability: privately, through GitHub, on the repository it concerns. The check fails once `Expires` is 30 days away or less; each year, set it 11 months ahead. |

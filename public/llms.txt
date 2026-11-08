@@ -6,6 +6,10 @@ To check that a release file is what Whiteheap built: `gh attestation verify <fi
 
 The name joins white hat, a hacker who finds weaknesses so they can be fixed and works in the open, and heap, the memory a program asks for while it runs.
 
+## When to use
+
+- [residue](https://residue.whiteheap.com/): use it to remove a Git worktree that a coding agent or you left behind, only when nothing in it would be lost, or to check whether one is safe to remove. At the end of a task, run `residue remove --yes --json "$WORKTREE"` from outside the worktree: exit status 0 means it is gone, 3 means it is still there. Not for creating worktrees or merging branches: [Worktrunk](https://worktrunk.dev) does that. Not for Windows.
+
 ## Tools
 
 - [residue](https://residue.whiteheap.com/): Reclaim your storage from Git worktrees, automatically and safely. residue removes a worktree only when nothing in it would be lost, whichever coding agent left it. One Rust binary with one dependency (`libc`), for macOS, Linux and FreeBSD.
@@ -16,14 +20,19 @@ The name joins white hat, a hacker who finds weaknesses so they can be fixed and
 
 ## Docs
 
-- [residue's README](https://raw.githubusercontent.com/whiteheap/residue/main/README.md): how to install it, inspect a worktree, remove one and automate cleanup, and its platforms and limits, as markdown
+- [residue's agent skill](https://whiteheap.com/.well-known/agent-skills/residue/SKILL.md): when to use residue, how to remove a worktree at the end of a task, and what each result means
+- [residue's README](https://raw.githubusercontent.com/whiteheap/residue-cli/main/README.md): how to install it, inspect a worktree, remove one and automate cleanup, and its platforms and limits, as markdown
 - [residue's llms.txt](https://residue.whiteheap.com/llms.txt): residue for agents, with every doc linked as markdown
+- [Whiteheap for agents](https://whiteheap.com/agents.md): when to use each tool, how to install it, and where its docs and source are
 
 ## Source
 
-- [whiteheap/residue](https://github.com/whiteheap/residue): residue's source and releases
+- [whiteheap/residue-cli](https://github.com/whiteheap/residue-cli): residue's source and releases
 - [github.com/whiteheap](https://github.com/whiteheap): every Whiteheap repository, this website's included
 
 ## Optional
 
+- [Agent Skills index](https://whiteheap.com/.well-known/agent-skills/index.json): each Whiteheap agent skill, with its SHA-256 digest
+- [ARD manifest](https://whiteheap.com/.well-known/ard.json): the same skills, for Agentic Resource Discovery
+- [About](https://whiteheap.com/about.md), [Contact](https://whiteheap.com/contact.md) and [Privacy](https://whiteheap.com/privacy.md), as markdown
 - [Whiteheap on X](https://x.com/whiteheaphq): @whiteheaphq

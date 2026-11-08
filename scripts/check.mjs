@@ -26,11 +26,20 @@ const SAME_AS = ["https://github.com/whiteheap", "https://x.com/whiteheaphq"];
 const USER_AGENT = "whiteheap.com site check (+https://github.com/whiteheap/whiteheap.com)";
 // Each file the standard names, with the type it must be served as.
 const TEXT = "text/plain; charset=utf-8";
+const MARKDOWN = "text/markdown; charset=utf-8";
+// The types public/_headers sets; Cloudflare gives every other file its own.
+const DECLARED = [TEXT, MARKDOWN];
 const FILES = [
   ["/", "text/html"],
   ["/robots.txt", TEXT],
   ["/sitemap.xml", "application/xml"],
   ["/llms.txt", TEXT],
+  ["/agents.md", MARKDOWN],
+  ["/index.md", MARKDOWN],
+  ["/about.md", MARKDOWN],
+  ["/.well-known/agent-skills/residue/SKILL.md", MARKDOWN],
+  ["/.well-known/agent-skills/index.json", "application/json"],
+  ["/.well-known/ard.json", "application/json"],
   ["/.well-known/security.txt", TEXT],
   [`/${INDEXNOW_KEY}.txt`, TEXT],
   ["/og.png", "image/png"],
@@ -81,7 +90,9 @@ async function get(path, { userAgent = USER_AGENT } = {}) {
       body: Buffer.from(await response.arrayBuffer()),
     };
   }
-  const file = new URL(`.${path.endsWith("/") ? `${path}index.html` : path}`, dist);
+  // As Cloudflare serves them: / is index.html, /about is about.html.
+  const built = path.endsWith("/") ? `${path}index.html` : /\.[A-Za-z0-9]+$/.test(path) ? path : `${path}.html`;
+  const file = new URL(`.${built}`, dist);
   try {
     return { status: 200, headers: new Headers(), body: await readFile(file) };
   } catch (error) {
@@ -726,8 +737,8 @@ async function checkDeclaredHeaders() {
   const rules = parseHeadersFile((await readFile(new URL("_headers", dist), "utf8")));
   for (const [path, type] of FILES) {
     const types = declared(rules, path).get("content-type") ?? [];
-    if (type === TEXT) {
-      expect(types.length === 1 && types[0] === TEXT, "_headers", `${path} needs exactly one Content-Type: ${TEXT}`);
+    if (DECLARED.includes(type)) {
+      expect(types.length === 1 && types[0] === type, "_headers", `${path} needs exactly one Content-Type: ${type}`);
     } else {
       expect(types.length === 0, "_headers", `${path} keeps the type Cloudflare gives it; do not set one`);
     }
@@ -773,7 +784,7 @@ async function checkServed() {
     const served = typeOf(file);
     const wanted = type.toLowerCase().replace(/\s+/g, "");
     expect(
-      type === TEXT ? served === wanted : served === wanted || served.startsWith(`${wanted};`),
+      DECLARED.includes(type) ? served === wanted : served === wanted || served.startsWith(`${wanted};`),
       path,
       `served as "${file.headers.get("content-type")}", expected "${type}"`,
     );
