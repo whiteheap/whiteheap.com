@@ -3,8 +3,10 @@ import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "../styles/global.css";
 import { LinkButton, Text } from "@cloudflare/kumo";
-import { GithubLogoIcon, GlobeIcon, XLogoIcon } from "@phosphor-icons/react";
+import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 import Hero from "../components/Hero.astro";
+import ResidueStack from "../components/ResidueStack.astro";
+import Tool from "../components/Tool.astro";
 
 const title = "Whiteheap · tools and infra for the agentic era";
 const description =
@@ -96,25 +98,27 @@ const organization = {
 
       <section class="section wrap split" aria-labelledby="tools">
         <h2 id="tools" class="label">tools</h2>
-        <div class="tool">
-          <h3>residue</h3>
-          <p>
-            Reclaim your storage from Git worktrees, automatically and safely. residue removes a
-            worktree only when nothing in it would be lost, whichever coding agent left it.
-          </p>
-          <p>One Rust binary with one dependency, for macOS and Linux.</p>
-          <div class="tool-links">
-            <LinkButton href="https://residue.whiteheap.com" variant="secondary" icon={GlobeIcon}>
-              residue.whiteheap.com
-            </LinkButton>
-            <LinkButton
-              href="https://github.com/whiteheap/residue"
-              variant="secondary"
-              icon={GithubLogoIcon}
-            >
-              github.com/whiteheap/residue
-            </LinkButton>
-          </div>
+        <div class="tools">
+          <Tool
+            name="residue"
+            logo="/tools/residue/logo-dark.svg"
+            title="Reclaim your storage from Git worktrees, automatically and safely."
+            lede="residue removes a worktree only when nothing in it would be lost, whichever coding agent left it."
+            about="One Rust binary with one dependency, for macOS, Linux and FreeBSD."
+            install={{
+              command: "curl -fsSL https://residue.whiteheap.com/install.sh | sh",
+              script: "https://residue.whiteheap.com/install.sh",
+              note: "Installs residue, and on macOS and Linux turns on automatic cleanup.",
+              alternative: {
+                label: "Or with Homebrew alone:",
+                command: "brew install whiteheap/tap/residue",
+              },
+            }}
+            website="https://residue.whiteheap.com"
+            repository="https://github.com/whiteheap/residue"
+          >
+            <ResidueStack slot="hero" />
+          </Tool>
         </div>
       </section>
     </main>
