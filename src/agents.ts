@@ -5,6 +5,17 @@ import { skillUrl } from "./skills/skills";
 
 const paragraphs = (list: string[]) => list.join("\n\n");
 
+/**
+ * The frontmatter that opens each served markdown document, so an agent reads
+ * its title, summary, canonical page and date without scraping. Values are
+ * JSON strings, which YAML reads as quoted strings.
+ */
+export const frontmatter = (doc: { title: string; description: string; canonical: string; updated: string }) =>
+  `---\ntitle: ${JSON.stringify(doc.title)}\ndescription: ${JSON.stringify(doc.description)}\ncanonical: ${doc.canonical}\nlast-updated: ${doc.updated}\n---\n\n`;
+
+/** When /agents.md last changed in meaning. */
+const agentsUpdated = "2026-11-08";
+
 const toolSection = (tool: ToolFacts) => `### ${tool.name}
 
 ${tool.title} ${tool.lede} ${tool.about}
@@ -20,7 +31,7 @@ ${tool.install.note} ${tool.install.alternative.label} \`${tool.install.alternat
 - Docs for agents: ${tool.llms}`;
 
 /** /index.md: the homepage, section for section. */
-export const homeMarkdown = () => `# Whiteheap: ${hero.title}
+export const homeMarkdown = () => `${frontmatter({ title: `Whiteheap · ${hero.title}`, description, canonical: `${ORIGIN}/`, updated: home.updated })}# Whiteheap: ${hero.title}
 
 > ${description}
 
@@ -53,7 +64,7 @@ ${paragraphs(home.name)}
 `;
 
 /** /agents.md: when to use each tool, how to install it, and where its docs and source are. */
-export const agentsMarkdown = () => `# Whiteheap for agents
+export const agentsMarkdown = () => `${frontmatter({ title: "Whiteheap for agents", description: "When an agent should use each Whiteheap tool, how to install it, and where its docs and source are.", canonical: `${ORIGIN}/agents.md`, updated: agentsUpdated })}# Whiteheap for agents
 
 > ${description}
 

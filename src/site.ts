@@ -61,6 +61,8 @@ export const hero = { title: "tools and infra for the agentic era", note: "fast,
 
 /** The homepage's prose, one string per paragraph: the HTML page and /index.md both render it. */
 export const home = {
+  /** The day its words last changed: /index.md says it, and public/sitemap.xml has it as lastmod. */
+  updated: "2026-11-08",
   mission: [
     "Agents now write code, run commands and hold credentials on real machines. Most of the tools around them were built for one person at a keyboard.",
     "They also run on a brittle stack: runtimes and package managers that have to line up, dependency trees nobody has read, install scripts piped straight into a shell. Every link in that chain runs with the agent's access.",
@@ -98,22 +100,25 @@ export const skills = [
   },
 ];
 
-/** The pages written in markdown, in src/text/, each served as HTML and as /<slug>.md. */
+/** The pages written in markdown, in src/text/, each served as HTML and as /<slug>.md. `updated` is the day its words last changed, as its .md says and as public/sitemap.xml has it. */
 export const textPages = {
   about: {
     heading: "about",
+    updated: "2026-11-08",
     title: "About Whiteheap",
     description:
       "Who builds Whiteheap, what it ships, and how each release can be checked: one Rust binary per tool, with SHA-256 checksums and a provenance attestation.",
   },
   contact: {
     heading: "contact",
+    updated: "2026-11-08",
     title: "Contact Whiteheap",
     description:
       "How to reach Whiteheap: issues for bugs and feature requests, private security advisories for vulnerabilities, and @whiteheaphq on X.",
   },
   privacy: {
     heading: "privacy",
+    updated: "2026-11-08",
     title: "Privacy at Whiteheap",
     description:
       "whiteheap.com sets no cookies and loads no analytics. What a visit sends to Cloudflare, which serves the site, and what residue keeps on your machine.",
