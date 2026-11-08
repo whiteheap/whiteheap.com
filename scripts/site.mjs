@@ -16,5 +16,9 @@ export const INDEXNOW_KEY = "70908b6d7e362f6f50b85609b145b9d3";
 /** Where IndexNow pings go: the shared endpoint Bing, Yandex and others read. */
 export const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 
-/** The HSTS max-age the Whiteheap standard asks for: two years. */
-export const HSTS_MAX_AGE = 63072000;
+/**
+ * The shortest HSTS max-age whiteheap.com may send: 30 days. The header comes
+ * from the whiteheap.com zone's HSTS setting (Cloudflare dashboard, SSL/TLS >
+ * Edge Certificates), which covers every subdomain, not from public/_headers.
+ */
+export const HSTS_MIN_MAX_AGE = 2592000;

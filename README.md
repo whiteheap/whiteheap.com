@@ -40,7 +40,7 @@ pnpm run deploy
 
 Deploying needs `pnpm exec wrangler login`, or a `CLOUDFLARE_API_TOKEN` with Workers Scripts edit and Workers Routes edit permissions. The `whiteheap` Worker has no script, so requests are served as static assets and do not count toward Worker request limits.
 
-HSTS: `public/_headers` sends `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`, two years. The whiteheap.com zone's own HSTS setting (SSL/TLS > Edge Certificates in the Cloudflare dashboard) replaces that header while it is on, and its longest max-age is 12 months, so keep it off. While it is on, `pnpm run smoke` fails on HSTS.
+HSTS comes from the whiteheap.com zone, not from this repository: its HSTS setting (SSL/TLS > Edge Certificates in the Cloudflare dashboard) sends `Strict-Transport-Security` with `includeSubDomains` for whiteheap.com and every subdomain, and replaces any such header in `public/_headers`. `pnpm run smoke` fails when the header is missing, lacks `includeSubDomains`, or has a max-age under 30 days.
 
 whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare zone, not through this repository.
 
@@ -65,7 +65,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `public/tools/residue/logo-dark.svg` | residue's mark for a dark background, copied unchanged from `site/public/logo-dark.svg` in whiteheap/residue at c49d1b4 |
 | `wrangler.jsonc` | The site Worker: the assets directory, the 404 page for unknown paths, and the whiteheap.com custom domain |
 | `www/` | The Worker that redirects www.whiteheap.com to whiteheap.com |
-| `public/_headers` | Security, HSTS, cache and text-type headers, applied by Cloudflare to every asset response. Astro adds the Content Security Policy as a `<meta>` tag at build time. |
+| `public/_headers` | Security, cache and text-type headers, applied by Cloudflare to every asset response. Astro adds the Content Security Policy as a `<meta>` tag at build time. |
 | `public/og.png` | The 1200x630 social image: a screenshot of the top of the page. Take it again after changing the hero, and rewrite `ogImageAlt` in `src/pages/index.astro` to say what it shows. |
 | `public/robots.txt`, `public/sitemap.xml` | One group that lets every crawler in, and the list of pages. A new page goes in the sitemap, or the check fails. |
 | `public/llms.txt` | A plain-text summary for agents, in the [llmstxt.org](https://llmstxt.org) format |
@@ -73,7 +73,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `public/70908b6d7e362f6f50b85609b145b9d3.txt` | The IndexNow key file. The key is public by design, and must equal `INDEXNOW_KEY` in `scripts/site.mjs`. |
 | `scripts/check.mjs` | The site check behind `pnpm build`, `pnpm run check` and `pnpm run smoke` |
 | `scripts/deploy.mjs`, `scripts/indexnow.mjs` | `pnpm run deploy`, and the IndexNow announcement it makes |
-| `scripts/site.mjs` | What the scripts share: the origin, the Organization `@id`, the IndexNow key and the HSTS max-age |
+| `scripts/site.mjs` | What the scripts share: the origin, the Organization `@id`, the IndexNow key and the shortest HSTS max-age the smoke check accepts |
 
 ## License
 

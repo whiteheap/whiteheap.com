@@ -1,16 +1,11 @@
 # Response headers for every static asset. Cloudflare reads this file at
-# deploy time and does not serve it. `pnpm run check` holds the HSTS and text
-# types here to the Whiteheap SEO standard; `pnpm run smoke` reads them live.
-#
-# HSTS: two years. The whiteheap.com zone's own HSTS setting (SSL/TLS > Edge
-# Certificates) replaces this header while it is on, and its longest choice is
-# 12 months, so keep that setting off.
+# deploy time and does not serve it. `pnpm run check` holds the text types
+# here to the Whiteheap SEO standard; `pnpm run smoke` reads them live.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
-  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

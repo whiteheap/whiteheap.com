@@ -38,7 +38,7 @@ pnpm exec astro preview --port 4391
 
 `pnpm run deploy` (`scripts/deploy.mjs`) builds and checks the site, compares each page's built HTML with whiteheap.com, uploads `dist/` to the Worker `whiteheap` (static assets only, custom domain whiteheap.com, set in `wrangler.jsonc`), deploys the www redirect in `www/`, announces the changed pages to IndexNow once they are live, and runs `pnpm run smoke`. `pnpm run deploy --dry-run` prints the pages it would announce and uploads nothing. A deploy needs `pnpm exec wrangler login` or a `CLOUDFLARE_API_TOKEN`. When it exits 1, it lists what is left to do.
 
-Keep the `whiteheap` Worker script-free: a script would run on every request, count toward Worker request limits, and stop `_headers` applying to the responses it returns. Keep the zone's own HSTS setting off: while it is on, it replaces the two-year header in `_headers` (README, Deploy).
+Keep the `whiteheap` Worker script-free: a script would run on every request, count toward Worker request limits, and stop `_headers` applying to the responses it returns. HSTS is the whiteheap.com zone's HSTS setting (SSL/TLS > Edge Certificates), one setting for every subdomain, and `pnpm run smoke` checks it. Do not add `Strict-Transport-Security` to `_headers`: the zone's setting replaces it.
 
 ## Astro
 

@@ -13,7 +13,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parse, walkSync, TEXT_NODE } from "ultrahtml";
 import { querySelector, querySelectorAll } from "ultrahtml/selector";
-import { HSTS_MAX_AGE, INDEXNOW_KEY, ORGANIZATION_ID, ORIGIN } from "./site.mjs";
+import { HSTS_MIN_MAX_AGE, INDEXNOW_KEY, ORGANIZATION_ID, ORIGIN } from "./site.mjs";
 
 const live = process.argv.includes("--live");
 const HOME = `${ORIGIN}/`;
@@ -554,13 +554,9 @@ const declared = (rules, path) => {
   return headers;
 };
 
-const hstsOk = (value) => new RegExp(`(^|;)\\s*max-age=${HSTS_MAX_AGE}\\s*(;|$)`, "i").test(value ?? "");
-
 /** In dist/: the headers public/_headers declares. Cloudflare joins repeats with commas. */
 async function checkDeclaredHeaders() {
   const rules = parseHeadersFile((await readFile(new URL("_headers", dist), "utf8")));
-  const hsts = declared(rules, "/").get("strict-transport-security") ?? [];
-  expect(hsts.length === 1 && hstsOk(hsts[0]), "_headers", `Strict-Transport-Security for /* must be set once, with max-age=${HSTS_MAX_AGE}`);
   for (const [path, type] of FILES) {
     const types = declared(rules, path).get("content-type") ?? [];
     if (type === TEXT) {
@@ -595,13 +591,15 @@ async function checkServed() {
     );
     expect(!file.headers.has("x-robots-tag"), path, "carries an X-Robots-Tag header");
   }
-  const home = await get("/");
-  expect(
-    hstsOk(home.headers.get("strict-transport-security")),
-    "/",
-    `Strict-Transport-Security is "${home.headers.get("strict-transport-security")}"; expected max-age=${HSTS_MAX_AGE}. ` +
-      "If it is the zone's HSTS setting, turn that off so public/_headers applies",
-  );
+  // HSTS comes from the whiteheap.com zone's HSTS setting (SSL/TLS > Edge
+  // Certificates), which covers every subdomain, not from public/_headers.
+  const hsts = (await get("/")).headers.get("strict-transport-security");
+  const owner = "the whiteheap.com zone's HSTS setting (SSL/TLS > Edge Certificates) sends it";
+  if (expect(hsts, "/", `has no Strict-Transport-Security header; ${owner}`)) {
+    const maxAge = Number(hsts.match(/(?:^|;)\s*max-age\s*=\s*"?(\d+)"?\s*(?:;|$)/i)?.[1] ?? Number.NaN);
+    expect(maxAge >= HSTS_MIN_MAX_AGE, "/", `Strict-Transport-Security "${hsts}" needs a max-age of at least ${HSTS_MIN_MAX_AGE}; ${owner}`);
+    expect(/(?:^|;)\s*includeSubDomains\s*(?:;|$)/i.test(hsts), "/", `Strict-Transport-Security "${hsts}" needs includeSubDomains; ${owner}`);
+  }
 }
 
 /** An unknown path is a 404 with the helpful page, not a soft 404. */
