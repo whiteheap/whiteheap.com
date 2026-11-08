@@ -4,9 +4,13 @@
  * cell (2 CSS px) at a time, after the Whiteheap cover image.
  *
  * The canvas holds one pixel per cell and CSS scales it up with
- * `image-rendering: pixelated`. It redraws on every display frame (60 Hz,
- * or 120 Hz on a fast screen), stops while off screen or in a hidden tab,
- * and draws a single still frame when the reader prefers reduced motion.
+ * `image-rendering: pixelated`. It draws 30 frames a second, stops while
+ * off screen or in a hidden tab, and draws a single still frame when the
+ * reader prefers reduced motion. Thirty is enough for every change to
+ * show: the fastest particle crosses 28 cells a second, under one cell a
+ * frame, and the sparkle re-rolls 15 times a second. Between two frames
+ * the script sleeps on a timer, so it does not wake on the display frames
+ * it skips (60 a second, 120 on a fast screen).
  *
  * To fit a frame in a few milliseconds, `layout` works out everything that
  * does not move once per canvas size: which tile cells show, how bright
@@ -23,6 +27,8 @@
 const CELL = 2;
 /** How often each cell re-rolls its sparkle, per second. */
 const SPARKLE_HZ = 15;
+/** The time between two frames: 30 a second. */
+const FRAME_MS = 1000 / 30;
 const ROWS = 6;
 
 function hash(x: number, y: number, z: number): number {
@@ -82,14 +88,24 @@ type Layout = {
   rw: number;
   rh: number;
   /**
-   * Per region cell, row-major: the cell is lit when this exceeds
-   * 0.54 * drift noise + 0.16 * sparkle. Zero or less means never lit.
+   * Each tile cell is lit when its threshold exceeds 0.54 * drift noise +
+   * 0.16 * sparkle. A threshold over 0.7 always exceeds it, so those cells
+   * are listed apart: as pixel indices, with their colors. A threshold of
+   * zero or less never does, so those cells are not listed at all.
    */
-  threshold: Float64Array;
-  /** Per region cell: its color when lit. */
-  lit: Uint32Array;
-  /** Per region cell: when in each sparkle period it re-rolls, 0 to 1. */
-  phase: Float32Array;
+  solid: Int32Array;
+  solidLit: Uint32Array;
+  /**
+   * The tile cells the texture decides, row-major: the pixel index, the
+   * region column and row, the threshold, the color when lit, and when in
+   * each sparkle period it re-rolls, 0 to 1.
+   */
+  doubt: Int32Array;
+  doubtCol: Uint16Array;
+  doubtRow: Uint16Array;
+  doubtThreshold: Float64Array;
+  doubtLit: Uint32Array;
+  doubtPhase: Float32Array;
   /** Grain cells in the dark bands and gaps, as pixel indices. */
   grain: Int32Array;
   grainPhase: Float32Array;
@@ -167,9 +183,14 @@ function layout(w: number, h: number, seed: number): Layout {
   const rh = Math.max(0, j1 - j0);
 
   // Everything about the tiles that does not move.
-  const threshold = new Float64Array(rw * rh);
-  const lit = new Uint32Array(rw * rh);
-  const phase = new Float32Array(rw * rh);
+  const solid: number[] = [];
+  const solidLit: number[] = [];
+  const doubt: number[] = [];
+  const doubtCol: number[] = [];
+  const doubtRow: number[] = [];
+  const doubtThreshold: number[] = [];
+  const doubtLit: number[] = [];
+  const doubtPhase: number[] = [];
   const grain: number[] = [];
   const grainPhase: number[] = [];
   for (let jj = 0; jj < rh; jj++) {
@@ -197,10 +218,20 @@ function layout(w: number, h: number, seed: number): Layout {
       const across = 0.5 + 0.5 * smoothstep(edge, edge + tile * 3, centre);
       const jitter = 0.92 + 0.16 * hash(r, k, seed + 7);
       const b = rowBright[r] * across * jitter * Math.pow(1 - d, 1.25);
-      const c = jj * rw + ii;
-      threshold[c] = b - 0.3 * hash(i, j, seed + 4);
-      lit[c] = gray(110 + 145 * b);
-      phase[c] = hash(i, j, seed + 31);
+      const threshold = b - 0.3 * hash(i, j, seed + 4);
+      if (threshold <= 0) continue;
+      // The texture term is at most 0.54 + 0.16, so a brighter cell always shows.
+      if (threshold > 0.7) {
+        solid.push(j * cols + i);
+        solidLit.push(gray(110 + 145 * b));
+        continue;
+      }
+      doubt.push(j * cols + i);
+      doubtCol.push(ii);
+      doubtRow.push(jj);
+      doubtThreshold.push(threshold);
+      doubtLit.push(gray(110 + 145 * b));
+      doubtPhase.push(hash(i, j, seed + 31));
     }
   }
 
@@ -249,9 +280,14 @@ function layout(w: number, h: number, seed: number): Layout {
     j0,
     rw,
     rh,
-    threshold,
-    lit,
-    phase,
+    solid: Int32Array.from(solid),
+    solidLit: Uint32Array.from(solidLit),
+    doubt: Int32Array.from(doubt),
+    doubtCol: Uint16Array.from(doubtCol),
+    doubtRow: Uint16Array.from(doubtRow),
+    doubtThreshold: Float64Array.from(doubtThreshold),
+    doubtLit: Uint32Array.from(doubtLit),
+    doubtPhase: Float32Array.from(doubtPhase),
     grain: Int32Array.from(grain),
     grainPhase: Float32Array.from(grainPhase),
     dust: Int32Array.from(dust),
@@ -331,7 +367,7 @@ function prepareDrift(L: Layout, drift: number, seed: number) {
 }
 
 function draw(L: Layout, pixels: Uint32Array, t: number, seed: number) {
-  const { cols, rows, i0, j0, rw, rh, threshold, lit, phase, lattice, latW } = L;
+  const { cols, rows, i0, j0, lattice, latW } = L;
   const { colX, colU, rowY, rowV } = L;
   const sparkle = t * SPARKLE_HZ;
   pixels.fill(gray(0));
@@ -351,32 +387,29 @@ function draw(L: Layout, pixels: Uint32Array, t: number, seed: number) {
     pixels[idx] = gray(48 + 46 * hash(i, j, roll));
   }
 
+  const { solid, solidLit } = L;
+  for (let n = 0; n < solid.length; n++) pixels[solid[n]] = solidLit[n];
+
   prepareDrift(L, t * 0.55, seed);
-  for (let jj = 0; jj < rh; jj++) {
-    const out = (j0 + jj) * cols + i0;
-    const row = jj * rw;
-    const ly = rowY[jj];
+  const { doubt, doubtCol, doubtRow, doubtThreshold, doubtLit, doubtPhase } = L;
+  for (let n = 0; n < doubt.length; n++) {
+    const s = doubtThreshold[n];
+    const ii = doubtCol[n];
+    const jj = doubtRow[n];
+    const p = rowY[jj] + colX[ii];
+    const a = lattice[p];
+    const b = lattice[p + 1];
+    const c = lattice[p + latW];
+    const d = lattice[p + latW + 1];
+    const u = colU[ii];
     const v = rowV[jj];
-    for (let ii = 0; ii < rw; ii++) {
-      const s = threshold[row + ii];
-      if (s <= 0) continue;
-      // The texture term is at most 0.54 + 0.16, so a brighter cell always shows.
-      if (s <= 0.7) {
-        const p = ly + colX[ii];
-        const a = lattice[p];
-        const b = lattice[p + 1];
-        const c = lattice[p + latW];
-        const d = lattice[p + latW + 1];
-        const u = colU[ii];
-        const drift = 0.54 * (a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v);
-        if (s <= drift) continue;
-        if (s <= drift + 0.16) {
-          const roll = (sparkle + phase[row + ii]) | 0;
-          if (s <= drift + 0.16 * hash(i0 + ii, j0 + jj, roll)) continue;
-        }
-      }
-      pixels[out + ii] = lit[row + ii];
+    const drift = 0.54 * (a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v);
+    if (s <= drift) continue;
+    if (s <= drift + 0.16) {
+      const roll = (sparkle + doubtPhase[n]) | 0;
+      if (s <= drift + 0.16 * hash(i0 + ii, j0 + jj, roll)) continue;
     }
+    pixels[doubt[n]] = doubtLit[n];
   }
 
   for (let n = 0; n < L.particles.length; n++) {
@@ -422,6 +455,7 @@ export function start(canvas: HTMLCanvasElement): void {
   let pixels: Uint32Array | null = null;
   let visible = true;
   let raf = 0;
+  let timer = 0;
   let last = 0;
   let t = 0;
 
@@ -444,20 +478,28 @@ export function start(canvas: HTMLCanvasElement): void {
     render();
   };
 
+  const moving = () => visible && !still.matches && !document.hidden;
+
   const tick = (now: number) => {
     raf = 0;
-    if (!visible || still.matches || document.hidden) return;
+    if (!moving()) return;
     // A long gap (a dropped frame, a stalled tab) moves the field at most 0.1 s.
     const dt = last ? Math.min(0.1, (now - last) / 1000) : 0;
     last = now;
     t += dt;
     if (L) advance(L, dt, seed);
     render();
-    raf = requestAnimationFrame(tick);
+    // Sleep until 6 ms before the next frame is due, then wait for the
+    // display, so frames stay on its beat: at 60, 90 or 120 Hz the next display
+    // frame after that is the due one, at 144 Hz the one before it.
+    timer = window.setTimeout(() => {
+      timer = 0;
+      if (moving()) raf = requestAnimationFrame(tick);
+    }, FRAME_MS - 6);
   };
 
   const run = () => {
-    if (raf || !visible || still.matches || document.hidden) return;
+    if (raf || timer || !moving()) return;
     last = 0;
     raf = requestAnimationFrame(tick);
   };

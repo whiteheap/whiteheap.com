@@ -15,7 +15,7 @@ pnpm dev
 pnpm build
 ```
 
-This builds `dist/`, then `scripts/check.mjs` reads it and prints every way it falls short of the standard: robots.txt, the sitemap against the pages, each page's title, description, canonical, Open Graph and Twitter tags, the 1200x630 `og:image` and its alt text, the icons, the landmarks, decorative drawings hidden from screen readers, the JSON-LD graph against what the page shows, llms.txt, security.txt, the IndexNow key file, the 404 page, and the headers in `public/_headers`. A clean build ends with `site check: all N checks passed`. `pnpm run check` runs the check again without building.
+This builds `dist/`, then `scripts/check.mjs` reads it and prints every way it falls short of the standard: robots.txt, the sitemap against the pages, each page's title, description, canonical, Open Graph and Twitter tags, the 1200x630 `og:image` and its alt text, the icons, the landmarks, decorative drawings hidden from screen readers, the JSON-LD graph against what the page shows, llms.txt, security.txt, the IndexNow key file, the 404 page, the headers in `public/_headers`, and that every class on a page has a rule in its stylesheet. A clean build ends with `site check: all N checks passed`. `pnpm run check` runs the check again without building.
 
 `pnpm run smoke` runs the same checks against https://whiteheap.com as served, and adds each file's status and content type, HSTS, the 404 status, the www and http redirects, five crawlers' user agents, and a 200 with no redirect for every URL in the JSON-LD.
 
@@ -52,15 +52,15 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `src/pages/404.astro` | The page for an address that does not exist, served with status 404. It is not in the sitemap and has no canonical. |
 | `src/layouts/Page.astro` | What every page shares: the head basics, icons, header and footer. A page adds its own meta tags in the `head` slot. |
 | `src/components/Hero.astro` | The hero: canvas, tagline and GitHub link |
-| `src/scripts/hero-field.ts` | The hero animation: a grid of tiles that breaks into drifting particles, drawn in black and white on every display frame (60 Hz, 120 Hz or more where the browser allows), with all static work done once per size. It stops while off screen and draws one still frame for readers who prefer reduced motion. |
+| `src/scripts/hero-field.ts` | The hero animation: a grid of tiles that breaks into drifting particles, drawn in black and white at 30 frames a second, with all static work done once per size. It sleeps on a timer between frames, stops while off screen or in a hidden tab, and draws one still frame for readers who prefer reduced motion. |
 | `src/components/Tool.astro` | One tool in the tools section, as a compact copy of its own site's hero: mark and name, art, title and lede, install command with a copy button, and links. Each tool is one `<Tool>`. |
 | `src/components/ResidueStack.astro` | residue's art, for the `hero` slot of its `<Tool>`: a canvas that `src/scripts/residue-stack.ts` draws |
-| `src/scripts/residue-stack.ts` | The residue art: a stack of sheets, one of which now and then loosens into dust while a new one gathers on top. A port of `site/public/hero.js` in whiteheap/residue at c49d1b4; change the two together. Like the hero, it stops while off screen and draws one still frame for readers who prefer reduced motion. |
+| `src/scripts/residue-stack.ts` | The residue art: a stack of sheets, one of which now and then loosens into dust while a new one gathers on top. A port of `site/public/hero.js` in whiteheap/residue at c49d1b4, with the frame scheduling of whiteheap/residue#87; change the two together. Like the hero, it stops while off screen and draws one still frame for readers who prefer reduced motion. |
 | `src/scripts/copy-button.ts` | The copy button beside each install command. Without it the button stays hidden and one click still selects the whole command. |
 | `src/components/decorative.ts` | `decorative(Icon)`: a Phosphor icon for a Kumo `icon` prop, hidden from screen readers |
 | `src/styles/global.css` | Tokens, reset and layout. Kumo's Tailwind styles are imported first. |
 | `brand/` | The Whiteheap logo kit: clean and textured marks, the original X avatar, exports up to 4096 px, and `CLAUDE-HANDOFF.md`, which explains each file. |
-| `public/logo-header.png` | The header mark: `brand/header-logo-textured.svg` rendered at 3x (123x96). The SVG is 449 KB of particles, too heavy for a 32 px logo. |
+| `src/assets/logo-header.webp` | The header mark: `brand/header-logo-textured.svg` rendered at 3x (123x96), as a lossless WebP (4.7 KB; the same pixels as a PNG were 8.7 KB). The SVG is 449 KB of particles, too heavy for a 32 px logo. Imported by `Page.astro`, so its name carries a hash. |
 | `public/favicon.svg` | `brand/favicon.svg`: the clean mark, because grain turns to noise at 16-32 px. `public/favicon-96.png` is the same mark as PNG for clients that skip SVG icons, rendered with `sips -s format png -z 96 96 brand/favicon.svg --out public/favicon-96.png`. `public/apple-touch-icon.png` is the textured X avatar at 180 px, and the Organization logo in the JSON-LD. |
 | `public/tools/residue/logo-dark.svg` | residue's mark for a dark background, copied unchanged from `site/public/logo-dark.svg` in whiteheap/residue at c49d1b4 |
 | `wrangler.jsonc` | The site Worker: the assets directory, the 404 page for unknown paths, and the whiteheap.com custom domain |

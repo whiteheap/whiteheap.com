@@ -4,12 +4,18 @@
  * footer. A page puts its own head tags in the `head` slot and its <main> in
  * the default slot.
  */
-import "@fontsource/ibm-plex-mono/400.css";
-import "@fontsource/ibm-plex-mono/500.css";
+// Latin only: the pages are in English. The other subsets were 16 files in
+// dist/ and 8 @font-face rules that no page used.
+import "@fontsource/ibm-plex-mono/latin-400.css";
+import "@fontsource/ibm-plex-mono/latin-500.css";
 import "../styles/global.css";
 import { LinkButton } from "@cloudflare/kumo";
 import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 import { decorative } from "../components/decorative";
+// The textured mark, as a lossless WebP: the same 123x96 pixels as the PNG
+// it replaced, in 4.7 KB instead of 8.7 KB. Imported, so its name carries a
+// hash and /_astro/ caches it for a year.
+import logoHeader from "../assets/logo-header.webp";
 
 interface Props {
   /** The page's title. It starts with "Whiteheap · " and no other page has it. */
@@ -36,7 +42,7 @@ const { title } = Astro.props;
   <body>
     <header class="site-header wrap">
       <a class="wordmark" href="/" aria-label="Whiteheap home">
-        <img src="/logo-header.png" alt="" width="41" height="32" />
+        <img src={logoHeader.src} alt="" width="41" height="32" />
         whiteheap
       </a>
       <nav aria-label="Whiteheap elsewhere">

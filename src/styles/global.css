@@ -1,6 +1,18 @@
-@source "../../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+/*
+ * Tailwind writes a rule for every class it finds in the files it scans, so
+ * it scans src/ and only the Kumo components the pages render: Button (for
+ * LinkButton) and Text. Scanning all of Kumo's dist made a 160 KB
+ * stylesheet, 116 KB of it utilities for components no page renders.
+ * source(none) is needed: with automatic detection on, a @source inside
+ * node_modules scanned every chunk beside it (Tailwind 4.3.4). A page that
+ * renders another Kumo component adds its chunk here; `pnpm run check`
+ * fails while a class in the built HTML has no rule in the built CSS.
+ */
 @import "@cloudflare/kumo/styles/tailwind";
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "../";
+@source "../../node_modules/@cloudflare/kumo/dist/chunks/button-*.js";
+@source "../../node_modules/@cloudflare/kumo/dist/chunks/text-*.js";
 
 @theme {
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
