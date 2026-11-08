@@ -4,11 +4,11 @@
  * and then one idle sheet loosens into dust that drifts off and fades, the
  * sheets above it settle down, and a new sheet gathers on top.
  *
- * It is the hero of https://residue.whiteheap.com, ported from whiteheap/residue
- * `site/public/hero.js` at c49d1b4, with the frame scheduling of
- * whiteheap/residue#87. The drawing and its timing are the same.
- * Here the stack centers in a canvas of its own; residue's site fits it into
- * the room its text leaves. Change the two together.
+ * It is the hero of https://residue.whiteheap.com, ported from
+ * whiteheap/residue-cli `site/public/hero.js` at c49d1b4, with the frame
+ * scheduling of whiteheap/residue-cli#87. The drawing and its timing are the
+ * same. Here the stack centers in a canvas of its own; residue's site fits
+ * it into the room its text leaves. Change the two together.
  *
  * The canvas holds one pixel per cell and CSS scales it up with
  * `image-rendering: pixelated`. A frame is a function of the time t alone, so
