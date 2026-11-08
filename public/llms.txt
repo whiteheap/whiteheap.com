@@ -6,7 +6,7 @@ Each tool is one binary with no runtime to install. Every release carries SHA-25
 
 ## Tools
 
-- [residue](https://residue.whiteheap.com): Reclaim your storage from Git worktrees, automatically and safely. residue removes a worktree only when nothing in it would be lost, whichever coding agent left it. One Rust binary with one dependency (`libc`), for macOS and Linux. Repository: https://github.com/whiteheap/residue. Install: `brew install whiteheap/tap/residue`
+- [residue](https://residue.whiteheap.com): Reclaim your storage from Git worktrees, automatically and safely. residue removes a worktree only when nothing in it would be lost, whichever coding agent left it. One Rust binary with one dependency (`libc`), for macOS, Linux and FreeBSD. Repository: https://github.com/whiteheap/residue. Install: `brew install whiteheap/tap/residue`
 
 ## Links
 

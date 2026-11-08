@@ -1,0 +1,13 @@
+---
+// residue's hero art, for the hero slot of its <Tool>. src/scripts/residue-stack.ts draws it.
+---
+
+<canvas class="pixel-art" data-residue-stack></canvas>
+
+<script>
+  import { start } from "../scripts/residue-stack";
+
+  for (const canvas of document.querySelectorAll<HTMLCanvasElement>("canvas[data-residue-stack]")) {
+    start(canvas);
+  }
+</script>

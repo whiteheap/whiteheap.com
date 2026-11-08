@@ -1,0 +1,121 @@
+---
+/**
+ * One Whiteheap tool, as a compact copy of the hero on the tool's own site:
+ * its mark and name, its art (the `hero` slot), its GitHub description as a
+ * title and a lede, its install command with a copy button, and links to its
+ * website and repository. Each tool on the page is one <Tool>.
+ */
+import { LinkButton } from "@cloudflare/kumo";
+import { CheckIcon, CopyIcon, GithubLogoIcon, GlobeIcon } from "@phosphor-icons/react";
+
+interface Props {
+  /** The tool's name, spelled as its repository spells it. */
+  name: string;
+  /**
+   * The tool's mark for a dark page, copied unchanged from its repository
+   * into public/tools/<name>/. This page is dark only.
+   */
+  logo: string;
+  /**
+   * The tool's GitHub repository description, word for word, split where the
+   * tool's own hero splits it: the job as the title, the rest as the lede.
+   */
+  title: string;
+  lede: string;
+  /** How the tool is built and where it runs, in one sentence. */
+  about?: string;
+  install: {
+    /** The install command, exactly as the tool's README gives it. */
+    command: string;
+    /** The script that command runs, for readers who read it first. */
+    script?: string;
+    /** What the command does besides installing. Screen readers also hear it on the copy button. */
+    note?: string;
+    /** Another way to install: the words before the command, and the command. */
+    alternative?: { label: string; command: string };
+  };
+  /** The tool's website, when it has one. It is linked before the repository. */
+  website?: string;
+  repository: string;
+}
+
+const { name, logo, title, lede, about, install, website, repository } = Astro.props;
+const id = `tool-${name}`;
+// A link reads as its address without the scheme, as in residue.whiteheap.com.
+const address = (url: string) => url.replace(/^https?:\/\//, "");
+---
+
+<article class="tool" aria-labelledby={id}>
+  <div class="tool-card">
+    {
+      Astro.slots.has("hero") && (
+        <div class="tool-hero" aria-hidden="true">
+          <slot name="hero" />
+        </div>
+      )
+    }
+    <div class="tool-head">
+      <h3 id={id} class="tool-name">
+        <img src={logo} alt="" width="28" height="28" />
+        {name}
+      </h3>
+      <p class="tool-title">{title}</p>
+      <p class="tool-lede">{lede}</p>
+    </div>
+    <div class="tool-install">
+      <div class="install">
+        <div class="command">
+          <pre tabindex="0"><code id={`${id}-command`}>{install.command}</code></pre>
+          <button
+            class="copy"
+            type="button"
+            data-copy={`${id}-command`}
+            data-copy-status={`${id}-status`}
+            aria-describedby={install.note ? `${id}-note` : undefined}
+            hidden
+          >
+            <CopyIcon className="copy-idle" aria-hidden="true" />
+            <CheckIcon className="copy-done" aria-hidden="true" />
+            <span data-copy-label>Copy</span>
+            <span class="sr-only">{` the ${name} install command`}</span>
+          </button>
+        </div>
+        {install.script && <a class="install-source" href={install.script}>read the script</a>}
+      </div>
+      <span id={`${id}-status`} class="sr-only" role="status"></span>
+      {
+        (install.note || install.alternative) && (
+          <p class="install-note">
+            {install.note && <span id={`${id}-note`}>{install.note}</span>}
+            {install.alternative && (
+              <span>
+                {install.alternative.label} <code>{install.alternative.command}</code>
+              </span>
+            )}
+          </p>
+        )
+      }
+    </div>
+    <div class="tool-meta">
+      {about && <p class="tool-about">{about}</p>}
+      <div class="tool-links">
+        {
+          website && (
+            <LinkButton href={website} variant="secondary" icon={GlobeIcon}>
+              {address(website)}
+            </LinkButton>
+          )
+        }
+        <LinkButton href={repository} variant="secondary" icon={GithubLogoIcon}>
+          {address(repository)}
+        </LinkButton>
+      </div>
+    </div>
+  </div>
+</article>
+
+<script>
+  import { wireCopyButtons } from "../scripts/copy-button";
+
+  wireCopyButtons();
+</script>
