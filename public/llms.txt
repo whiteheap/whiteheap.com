@@ -4,6 +4,8 @@
 
 To check that a release file is what Whiteheap built: `gh attestation verify <file> --repo whiteheap/<tool>`.
 
+The name joins white hat, a hacker who finds weaknesses so they can be fixed and works in the open, and heap, the memory a program asks for while it runs.
+
 ## Tools
 
 - [residue](https://residue.whiteheap.com/): Reclaim your storage from Git worktrees, automatically and safely. residue removes a worktree only when nothing in it would be lost, whichever coding agent left it. One Rust binary with one dependency (`libc`), for macOS, Linux and FreeBSD.
