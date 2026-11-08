@@ -33,6 +33,10 @@ function reactAtBuildTime() {
 
 export default defineConfig({
   site: "https://whiteheap.com",
+  // /about builds about.html, served at /about with no trailing slash.
+  build: { format: "file" },
+  // Keep markdown's straight quotes and dashes: the fonts hold ASCII only.
+  markdown: { smartypants: false },
   integrations: [reactAtBuildTime()],
   // Hashes every processed script and style into a CSP <meta> at build time.
   security: { csp: true },

@@ -1,0 +1,38 @@
+---
+/**
+ * The head tags of a canonical page: its description, canonical, Open Graph
+ * and Twitter tags, and its markdown twin. `pnpm run check` holds each page to
+ * the Whiteheap SEO standard. Every page shares public/og.png.
+ */
+import { ORIGIN, ogImageAlt } from "../site";
+
+interface Props {
+  /** The page's title, as Page has it. */
+  title: string;
+  /** At most 160 characters, in the words of the page's visible copy. */
+  description: string;
+  /** The page's path: "/" or "/about". */
+  path: string;
+  /** The page's markdown twin, such as "/about.md". */
+  markdown: string;
+}
+
+const { title, description, path, markdown } = Astro.props;
+const url = new URL(path, ORIGIN).href;
+---
+
+<meta name="description" content={description} />
+<link rel="canonical" href={url} />
+<link rel="alternate" type="text/markdown" href={markdown} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Whiteheap" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={url} />
+<meta property="og:image" content={`${ORIGIN}/og.png`} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={ogImageAlt} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@whiteheaphq" />
+<meta name="twitter:image:alt" content={ogImageAlt} />

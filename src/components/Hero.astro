@@ -2,14 +2,15 @@
 import { LinkButton } from "@cloudflare/kumo";
 import { GithubLogoIcon } from "@phosphor-icons/react";
 import { decorative } from "./decorative";
+import { hero } from "../site";
 ---
 
 <section class="hero" aria-labelledby="hero-title">
   <canvas class="hero-field" aria-hidden="true" data-hero-field></canvas>
   <div class="hero-content wrap">
     <hgroup class="hero-heading">
-      <h1 id="hero-title" class="hero-title">tools and infra for the agentic era</h1>
-      <p class="hero-note">fast, secure and reliable</p>
+      <h1 id="hero-title" class="hero-title">{hero.title}</h1>
+      <p class="hero-note">{hero.note}</p>
     </hgroup>
     <LinkButton href="https://github.com/whiteheap" variant="secondary" icon={decorative(GithubLogoIcon)}>
       github.com/whiteheap

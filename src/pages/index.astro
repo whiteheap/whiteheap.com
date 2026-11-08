@@ -1,41 +1,21 @@
 ---
 import { Text } from "@cloudflare/kumo";
 import Hero from "../components/Hero.astro";
+import PageMeta from "../components/PageMeta.astro";
 import ResidueStack from "../components/ResidueStack.astro";
 import Tool from "../components/Tool.astro";
 import Page from "../layouts/Page.astro";
+import { description, hero, home, residue } from "../site";
 
-const title = "Whiteheap · tools and infra for the agentic era";
-const description =
-  "Whiteheap builds open-source tools and infrastructure for agents, developers and security teams, all in Rust.";
+const title = `Whiteheap · ${hero.title}`;
 const url = "https://whiteheap.com/";
 const organizationId = `${url}#organization`;
-// What public/og.png shows. Write it again when the screenshot is taken again.
-const ogImageAlt =
-  "The top of whiteheap.com: “tools and infra for the agentic era” and “fast, secure and reliable”, beside a grid of white tiles that breaks into drifting particles.";
+const websiteId = `${url}#website`;
+const residueId = `${new URL(residue.website).href}#software`;
 
-// residue's <Tool>. Its JSON-LD below takes the same words, so the two match.
-const residue = {
-  name: "residue",
-  logo: "/tools/residue/logo-dark.svg",
-  title: "Reclaim your storage from Git worktrees, automatically and safely.",
-  lede: "residue removes a worktree only when nothing in it would be lost, whichever coding agent left it.",
-  about: "One Rust binary with one dependency, for macOS, Linux and FreeBSD.",
-  install: {
-    command: "curl -fsSL https://residue.whiteheap.com/install.sh | sh",
-    script: "https://residue.whiteheap.com/install.sh",
-    note: "Installs residue, and on macOS and Linux turns on automatic cleanup.",
-    alternative: {
-      label: "Or with Homebrew alone:",
-      command: "brew install whiteheap/tap/residue",
-    },
-  },
-  website: "https://residue.whiteheap.com",
-  repository: "https://github.com/whiteheap/residue",
-};
-
-// One graph, on this page only: Whiteheap, this website, and each tool on the
-// page. Tool sites name Whiteheap as their publisher by organizationId.
+// One graph, on this page only: Whiteheap, this website and page, and each
+// tool on the page with its source. Tool sites name Whiteheap as their
+// publisher by organizationId. Each node is something the page shows.
 // `pnpm run check` holds it to the standard; `pnpm run smoke` fetches each URL.
 const jsonLd = {
   "@context": "https://schema.org",
@@ -48,15 +28,27 @@ const jsonLd = {
       logo: "https://whiteheap.com/apple-touch-icon.png",
       description,
       sameAs: ["https://github.com/whiteheap", "https://x.com/whiteheaphq"],
+      // The contact page, linked in the footer: issues, security advisories, X.
+      contactPoint: { "@type": "ContactPoint", contactType: "customer support", url: "https://whiteheap.com/contact" },
     },
     {
       "@type": "WebSite",
+      "@id": websiteId,
       name: "Whiteheap",
       url,
       publisher: { "@id": organizationId },
     },
     {
+      "@type": "WebPage",
+      name: title,
+      url,
+      description,
+      isPartOf: { "@id": websiteId },
+      about: { "@id": organizationId },
+    },
+    {
       "@type": "SoftwareApplication",
+      "@id": residueId,
       name: residue.name,
       description: `${residue.title} ${residue.lede}`,
       url: new URL(residue.website).href,
@@ -65,26 +57,22 @@ const jsonLd = {
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       publisher: { "@id": organizationId },
     },
+    {
+      "@type": "SoftwareSourceCode",
+      name: residue.name,
+      codeRepository: residue.repository,
+      programmingLanguage: "Rust",
+      license: "https://opensource.org/license/mit",
+      targetProduct: { "@id": residueId },
+      publisher: { "@id": organizationId },
+    },
   ],
 };
 ---
 
 <Page title={title}>
   <Fragment slot="head">
-    <meta name="description" content={description} />
-    <link rel="canonical" href={url} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Whiteheap" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={url} />
-    <meta property="og:image" content="https://whiteheap.com/og.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={ogImageAlt} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@whiteheaphq" />
-    <meta name="twitter:image:alt" content={ogImageAlt} />
+    <PageMeta title={title} description={description} path="/" markdown="/index.md" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
 
@@ -94,38 +82,14 @@ const jsonLd = {
     <section class="section wrap split" aria-labelledby="mission">
       <h2 id="mission" class="label">mission</h2>
       <div class="prose">
-        <Text size="lg">
-          Agents now write code, run commands and hold credentials on real machines. Most of the
-          tools around them were built for one person at a keyboard.
-        </Text>
-        <Text size="lg">
-          They also run on a brittle stack: runtimes and package managers that have to line up,
-          dependency trees nobody has read, install scripts piped straight into a shell. Every
-          link in that chain runs with the agent's access.
-        </Text>
-        <Text size="lg">
-          Whiteheap builds open-source tools and infrastructure for that shift: for the agents,
-          for the developers who run them, and for the security teams who answer for what they
-          do.
-        </Text>
-        <Text size="lg">
-          We build all of it in Rust. The compiler rules out whole classes of memory bugs before
-          anything ships. Each tool is one binary with no runtime to install and as few
-          dependencies as we can manage. Every release carries SHA-256 checksums and a
-          build-provenance attestation, so you can check that what you run is what we built.
-        </Text>
+        {home.mission.map((paragraph) => <Text size="lg">{paragraph}</Text>)}
       </div>
     </section>
 
     <section class="section wrap split" aria-labelledby="standard">
       <h2 id="standard" class="label">standard</h2>
       <div class="prose">
-        <Text size="lg">
-          We want absolute excellence in software. Each tool we ship leaves your work alone
-          whenever it cannot tell what is safe to touch, and says what it did in a few words. It
-          uses as little CPU and memory as it can, and we measure both on each code change before
-          it ships.
-        </Text>
+        {home.standard.map((paragraph) => <Text size="lg">{paragraph}</Text>)}
       </div>
     </section>
 
@@ -141,11 +105,7 @@ const jsonLd = {
     <section class="section wrap split" aria-labelledby="name">
       <h2 id="name" class="label">name</h2>
       <div class="prose">
-        <Text size="lg">
-          Whiteheap joins white hat and heap. A white hat is a hacker who finds weaknesses so they
-          can be fixed, and works in the open. The heap is the memory a program asks for while it
-          runs.
-        </Text>
+        {home.name.map((paragraph) => <Text size="lg">{paragraph}</Text>)}
       </div>
     </section>
   </main>

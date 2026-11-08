@@ -62,10 +62,17 @@ const { title } = Astro.props;
     <footer class="site-footer wrap">
       <span>&copy; 2026 Whiteheap</span>
       <nav aria-label="Footer">
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
         <a href="https://github.com/whiteheap">GitHub</a>
         <a href="https://x.com/whiteheaphq">X</a>
         <a href="https://residue.whiteheap.com">residue</a>
       </nav>
     </footer>
+
+    <script>
+      import "../scripts/webmcp";
+    </script>
   </body>
 </html>

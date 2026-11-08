@@ -19,3 +19,23 @@
 # name carries no hash, and a day-old mark still fits the page.
 /tools/*
   Cache-Control: public, max-age=86400
+
+# Markdown: each page's twin, /agents.md and the agent skills. Cloudflare
+# does not give .md a type of its own.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+# The homepage names its markdown twin, llms.txt, sitemap and agent catalog
+# in Link headers (RFC 8288), for an agent that reads headers before HTML.
+# Cloudflare joins repeated headers with commas.
+/
+  Link: </index.md>; rel="alternate"; type="text/markdown"
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
+  Link: </sitemap.xml>; rel="sitemap"; type="application/xml"
+  Link: </.well-known/ard.json>; rel="ard"; type="application/json"
+
+# The agent discovery files: any agent, from any origin, may read them.
+/.well-known/ard.json
+  Access-Control-Allow-Origin: *
+/.well-known/agent-skills/*
+  Access-Control-Allow-Origin: *
