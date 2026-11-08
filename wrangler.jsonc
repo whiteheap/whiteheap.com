@@ -5,7 +5,9 @@
   "name": "whiteheap",
   "compatibility_date": "2026-11-04",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // An unknown path gets dist/404.html with status 404, not an empty response.
+    "not_found_handling": "404-page"
   },
   "routes": [{ "pattern": "whiteheap.com", "custom_domain": true }],
   // Serve the site only at its canonical address.

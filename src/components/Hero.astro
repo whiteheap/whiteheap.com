@@ -1,6 +1,7 @@
 ---
 import { LinkButton } from "@cloudflare/kumo";
 import { GithubLogoIcon } from "@phosphor-icons/react";
+import { decorative } from "./decorative";
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -10,7 +11,7 @@ import { GithubLogoIcon } from "@phosphor-icons/react";
       <h1 id="hero-title" class="hero-title">tools and infra for the agentic era</h1>
       <p class="hero-note">fast, secure and reliable</p>
     </hgroup>
-    <LinkButton href="https://github.com/whiteheap" variant="secondary" icon={GithubLogoIcon}>
+    <LinkButton href="https://github.com/whiteheap" variant="secondary" icon={decorative(GithubLogoIcon)}>
       github.com/whiteheap
     </LinkButton>
   </div>

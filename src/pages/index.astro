@@ -1,40 +1,78 @@
 ---
-import "@fontsource/ibm-plex-mono/400.css";
-import "@fontsource/ibm-plex-mono/500.css";
-import "../styles/global.css";
-import { LinkButton, Text } from "@cloudflare/kumo";
-import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
+import { Text } from "@cloudflare/kumo";
 import Hero from "../components/Hero.astro";
 import ResidueStack from "../components/ResidueStack.astro";
 import Tool from "../components/Tool.astro";
+import Page from "../layouts/Page.astro";
 
 const title = "Whiteheap · tools and infra for the agentic era";
 const description =
   "Whiteheap builds open-source tools and infrastructure for agents, developers and security teams, all in Rust.";
 const url = "https://whiteheap.com/";
-const organization = {
+const organizationId = `${url}#organization`;
+// What public/og.png shows. Write it again when the screenshot is taken again.
+const ogImageAlt =
+  "The top of whiteheap.com: “tools and infra for the agentic era” and “fast, secure and reliable”, beside a grid of white tiles that breaks into drifting particles.";
+
+// residue's <Tool>. Its JSON-LD below takes the same words, so the two match.
+const residue = {
+  name: "residue",
+  logo: "/tools/residue/logo-dark.svg",
+  title: "Reclaim your storage from Git worktrees, automatically and safely.",
+  lede: "residue removes a worktree only when nothing in it would be lost, whichever coding agent left it.",
+  about: "One Rust binary with one dependency, for macOS, Linux and FreeBSD.",
+  install: {
+    command: "curl -fsSL https://residue.whiteheap.com/install.sh | sh",
+    script: "https://residue.whiteheap.com/install.sh",
+    note: "Installs residue, and on macOS and Linux turns on automatic cleanup.",
+    alternative: {
+      label: "Or with Homebrew alone:",
+      command: "brew install whiteheap/tap/residue",
+    },
+  },
+  website: "https://residue.whiteheap.com",
+  repository: "https://github.com/whiteheap/residue",
+};
+
+// One graph, on this page only: Whiteheap, this website, and each tool on the
+// page. Tool sites name Whiteheap as their publisher by organizationId.
+// `pnpm run check` holds it to the standard; `pnpm run smoke` fetches each URL.
+const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Whiteheap",
-  url,
-  logo: "https://whiteheap.com/apple-touch-icon.png",
-  description,
-  sameAs: ["https://github.com/whiteheap", "https://x.com/whiteheaphq"],
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": organizationId,
+      name: "Whiteheap",
+      url,
+      logo: "https://whiteheap.com/apple-touch-icon.png",
+      description,
+      sameAs: ["https://github.com/whiteheap", "https://x.com/whiteheaphq"],
+    },
+    {
+      "@type": "WebSite",
+      name: "Whiteheap",
+      url,
+      publisher: { "@id": organizationId },
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: residue.name,
+      description: `${residue.title} ${residue.lede}`,
+      url: new URL(residue.website).href,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "macOS, Linux, FreeBSD",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      publisher: { "@id": organizationId },
+    },
+  ],
 };
 ---
 
-<!doctype html>
-<html lang="en" data-mode="dark">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#000000" />
-    <title>{title}</title>
+<Page title={title}>
+  <Fragment slot="head">
     <meta name="description" content={description} />
     <link rel="canonical" href={url} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Whiteheap" />
     <meta property="og:title" content={title} />
@@ -43,93 +81,49 @@ const organization = {
     <meta property="og:image" content="https://whiteheap.com/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@whiteheaphq" />
-    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
-  </head>
-  <body>
-    <header class="site-header wrap">
-      <a class="wordmark" href="/" aria-label="Whiteheap home">
-        <img src="/logo-header.png" alt="" width="41" height="32" />
-        whiteheap
-      </a>
-      <nav aria-label="Whiteheap elsewhere">
-        <LinkButton href="https://github.com/whiteheap" variant="ghost" icon={GithubLogoIcon}>
-          GitHub
-        </LinkButton>
-        <LinkButton
-          href="https://x.com/whiteheaphq"
-          variant="ghost"
-          shape="square"
-          icon={XLogoIcon}
-          aria-label="Whiteheap on X"
-        />
-      </nav>
-    </header>
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
 
-    <main>
-      <Hero />
+  <main>
+    <Hero />
 
-      <section class="section wrap split" aria-labelledby="mission">
-        <h2 id="mission" class="label">mission</h2>
-        <div class="prose">
-          <Text size="lg">
-            Agents now write code, run commands and hold credentials on real machines. Most of the
-            tools around them were built for one person at a keyboard.
-          </Text>
-          <Text size="lg">
-            They also run on a brittle stack: runtimes and package managers that have to line up,
-            dependency trees nobody has read, install scripts piped straight into a shell. Every
-            link in that chain runs with the agent's access.
-          </Text>
-          <Text size="lg">
-            Whiteheap builds open-source tools and infrastructure for that shift: for the agents,
-            for the developers who run them, and for the security teams who answer for what they
-            do.
-          </Text>
-          <Text size="lg">
-            We build all of it in Rust. The compiler rules out whole classes of memory bugs before
-            anything ships. Each tool is one binary with no runtime to install and as few
-            dependencies as we can manage. Every release carries SHA-256 checksums and a
-            build-provenance attestation, so you can check that what you run is what we built.
-          </Text>
-        </div>
-      </section>
+    <section class="section wrap split" aria-labelledby="mission">
+      <h2 id="mission" class="label">mission</h2>
+      <div class="prose">
+        <Text size="lg">
+          Agents now write code, run commands and hold credentials on real machines. Most of the
+          tools around them were built for one person at a keyboard.
+        </Text>
+        <Text size="lg">
+          They also run on a brittle stack: runtimes and package managers that have to line up,
+          dependency trees nobody has read, install scripts piped straight into a shell. Every
+          link in that chain runs with the agent's access.
+        </Text>
+        <Text size="lg">
+          Whiteheap builds open-source tools and infrastructure for that shift: for the agents,
+          for the developers who run them, and for the security teams who answer for what they
+          do.
+        </Text>
+        <Text size="lg">
+          We build all of it in Rust. The compiler rules out whole classes of memory bugs before
+          anything ships. Each tool is one binary with no runtime to install and as few
+          dependencies as we can manage. Every release carries SHA-256 checksums and a
+          build-provenance attestation, so you can check that what you run is what we built.
+        </Text>
+      </div>
+    </section>
 
-      <section class="section wrap split" aria-labelledby="tools">
-        <h2 id="tools" class="label">tools</h2>
-        <div class="tools">
-          <Tool
-            name="residue"
-            logo="/tools/residue/logo-dark.svg"
-            title="Reclaim your storage from Git worktrees, automatically and safely."
-            lede="residue removes a worktree only when nothing in it would be lost, whichever coding agent left it."
-            about="One Rust binary with one dependency, for macOS, Linux and FreeBSD."
-            install={{
-              command: "curl -fsSL https://residue.whiteheap.com/install.sh | sh",
-              script: "https://residue.whiteheap.com/install.sh",
-              note: "Installs residue, and on macOS and Linux turns on automatic cleanup.",
-              alternative: {
-                label: "Or with Homebrew alone:",
-                command: "brew install whiteheap/tap/residue",
-              },
-            }}
-            website="https://residue.whiteheap.com"
-            repository="https://github.com/whiteheap/residue"
-          >
-            <ResidueStack slot="hero" />
-          </Tool>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer wrap">
-      <span>&copy; 2026 Whiteheap</span>
-      <nav aria-label="Footer">
-        <a href="https://github.com/whiteheap">GitHub</a>
-        <a href="https://x.com/whiteheaphq">X</a>
-        <a href="https://residue.whiteheap.com">residue</a>
-      </nav>
-    </footer>
-  </body>
-</html>
+    <section class="section wrap split" aria-labelledby="tools">
+      <h2 id="tools" class="label">tools</h2>
+      <div class="tools">
+        <Tool {...residue}>
+          <ResidueStack slot="hero" />
+        </Tool>
+      </div>
+    </section>
+  </main>
+</Page>
