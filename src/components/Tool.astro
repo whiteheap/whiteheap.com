@@ -42,8 +42,20 @@ interface Props {
 
 const { name, logo, title, lede, about, install, website, repository } = Astro.props;
 const id = `tool-${name}`;
-// A link reads as its address without the scheme, as in residue.whiteheap.com.
-const address = (url: string) => url.replace(/^https?:\/\//, "");
+// A link reads as its address without the scheme, as in residue.whiteheap.com,
+// split at each slash. The template puts a <wbr> before each slash, so a label
+// too long for its card wraps there first: github.com/whiteheap, then
+// /residue-cli, a break before the slash as the Chicago Manual of Style puts it.
+const address = (url: string) => url.replace(/^https?:\/\//, "").split("/");
+// Kumo sizes a LinkButton to one line of its label and never lets it shrink
+// (w-max shrink-0 h-9), so a long address, such as
+// github.com/whiteheap/residue-cli on a 320px card, ran past the card. These
+// let it shrink to the card and wrap its label there, while it stays one
+// line, 36px tall, wherever it fits. Kumo merges them over its own classes.
+// The top and bottom padding keep the one-line label where Kumo puts it;
+// they are pt and pb, not pbs and pbe, because Kumo's own padding is pb-0.5
+// and its class merge only replaces a class of the same family.
+const linkFit = "shrink h-auto min-h-9 pt-1 pb-1.5 wrap-anywhere";
 ---
 
 <article class="tool" aria-labelledby={id}>
@@ -102,13 +114,23 @@ const address = (url: string) => url.replace(/^https?:\/\//, "");
       <div class="tool-links">
         {
           website && (
-            <LinkButton href={website} variant="secondary" icon={decorative(GlobeIcon)}>
-              {address(website)}
+            <LinkButton
+              href={website}
+              variant="secondary"
+              icon={decorative(GlobeIcon)}
+              className={linkFit}
+            >
+              {address(website).map((part, i) => (i ? <><wbr />/{part}</> : part))}
             </LinkButton>
           )
         }
-        <LinkButton href={repository} variant="secondary" icon={decorative(GithubLogoIcon)}>
-          {address(repository)}
+        <LinkButton
+          href={repository}
+          variant="secondary"
+          icon={decorative(GithubLogoIcon)}
+          className={linkFit}
+        >
+          {address(repository).map((part, i) => (i ? <><wbr />/{part}</> : part))}
         </LinkButton>
       </div>
     </div>
