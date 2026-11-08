@@ -1,0 +1,21 @@
+/*
+ * IBM Plex Mono 400 and 500, cut by scripts/fonts.mjs to the characters the
+ * pages draw: printable ASCII and the copyright sign. `pnpm run check` fails
+ * when a page has a character a font lacks; "Fonts" in the README says what
+ * to do then.
+ */
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+}
