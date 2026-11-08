@@ -4,7 +4,8 @@ One static page, and a page for a missing address (`src/pages/404.astro`); both 
 
 ## Rules
 
-- Keep the page static. Adding a `client:*` directive ships React's runtime (about 68 KB gzipped) for one component; avoid it unless the page truly needs interactivity.
+- Keep the page static. `astro.config.mjs` registers React for the build only, without its client runtime, so a `client:*` directive builds an island that never hydrates, and the site check fails on it. A component that truly needs interactivity needs `react()` registered there instead, which ships React's runtime (about 68 KB gzipped) to every reader.
+- The fonts in `src/fonts/` hold printable ASCII and the copyright sign, and nothing else. A page that draws any other character, such as an em dash or a curly quote, fails the site check, which names the character. Write it in ASCII, or add it to `UNICODES` in `scripts/fonts.mjs`, run `pnpm run fonts` (it needs `brew install harfbuzz woff2`) and commit the fonts it writes.
 - A reader's CPU and memory are scarce. A drawing that moves draws at most 30 frames a second, sleeps on a timer between frames, stops while off screen or in a hidden tab, and draws one still frame for reduced motion, as `src/scripts/hero-field.ts` does. Tailwind scans only `src/` and the Kumo chunks listed in `src/styles/global.css`; a page that renders another Kumo component adds its chunk there.
 - Use Kumo components (`@cloudflare/kumo`) and Phosphor icons. Kumo props differ from their names: `Code` takes `code="..."`, not children; `Link variant="current"` inherits the text color. Kumo's copy components (`ClipboardText`, `InlineCopyText`) need React in the browser, so the copy button is plain markup in `src/components/Tool.astro`, wired by `src/scripts/copy-button.ts`.
 - Pass a Phosphor icon to a Kumo `icon` prop as `decorative(Icon)`, from `src/components/decorative.ts`. Kumo renders a bare icon component with no props, so its SVG would reach screen readers.

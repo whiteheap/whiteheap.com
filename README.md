@@ -15,11 +15,27 @@ pnpm dev
 pnpm build
 ```
 
-This builds `dist/`, then `scripts/check.mjs` reads it and prints every way it falls short of the standard: robots.txt, the sitemap against the pages, each page's title, description, canonical, Open Graph and Twitter tags, the 1200x630 `og:image` and its alt text, the icons, the landmarks, decorative drawings hidden from screen readers, the JSON-LD graph against what the page shows, llms.txt, security.txt, the IndexNow key file, the 404 page, the headers in `public/_headers`, and that every class on a page has a rule in its stylesheet. A clean build ends with `site check: all N checks passed`. `pnpm run check` runs the check again without building.
+This builds `dist/`, then `scripts/check.mjs` reads it and prints every way it falls short of the standard: robots.txt, the sitemap against the pages, each page's title, description, canonical, Open Graph and Twitter tags, the 1200x630 `og:image` and its alt text, the icons, the landmarks, decorative drawings hidden from screen readers, the JSON-LD graph against what the page shows, llms.txt, security.txt, the IndexNow key file, the 404 page, and the headers in `public/_headers`. It also checks that every class on a page has a rule in its stylesheet, that the fonts hold every character a page draws (see "Fonts"), that every Astro island can hydrate, and that a page, stylesheet or script names each file in `dist/_astro/`, so the build ships nothing that no reader loads. A clean build ends with `site check: all N checks passed`. `pnpm run check` runs the check again without building.
 
 `pnpm run smoke` runs the same checks against https://whiteheap.com as served, and adds each file's status and content type, HSTS, the 404 status, the www and http redirects, five crawlers' user agents, and a 200 with no redirect for every URL in the JSON-LD.
 
 `pnpm exec wrangler dev` serves `dist/` the way Cloudflare does, with the headers from `public/_headers` and the 404 page with its status.
+
+## Fonts
+
+The pages use IBM Plex Mono 400 and 500, cut to printable ASCII and the copyright sign: 8.6 and 8.7 KB instead of the 14.7 and 14.9 KB latin files, 12.3 KB less to download on a first visit. `src/fonts/` holds the cut fonts and the font's SIL Open Font License, which names no Reserved Font Name, so the cut keeps the font's name. The build uses them as they are and needs no font tool.
+
+A character the fonts lack would be drawn in another font, so `pnpm build` fails on one and names it:
+
+```text
+/: has U+2014 (—), which IBM Plex Mono 400 (/_astro/ibm-plex-mono-latin-400-normal.B5x82mTJ.woff2) lacks: write each in ASCII, or add each to UNICODES in scripts/fonts.mjs, run pnpm run fonts, then pnpm build
+```
+
+Write it in ASCII, or add it to the fonts:
+
+1. Add its hex code to `UNICODES` in `scripts/fonts.mjs`.
+2. Run `pnpm run fonts`. It needs `brew install harfbuzz woff2`, fetches `@fontsource/ibm-plex-mono` 5.3.0 from npm and checks its hashes, and keeps every table, hint and layout feature for the characters it keeps.
+3. Run `pnpm build`, and commit the two fonts in `src/fonts/`.
 
 ## Deploy
 
@@ -59,10 +75,12 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `src/scripts/copy-button.ts` | The copy button beside each install command. Without it the button stays hidden and one click still selects the whole command. |
 | `src/components/decorative.ts` | `decorative(Icon)`: a Phosphor icon for a Kumo `icon` prop, hidden from screen readers |
 | `src/styles/global.css` | Tokens, reset and layout. Kumo's Tailwind styles are imported first. |
+| `src/styles/fonts.css`, `src/fonts/` | The two `@font-face` rules, and the fonts they load with their license: IBM Plex Mono 400 and 500, cut to the characters the pages draw (see "Fonts") |
 | `brand/` | The Whiteheap logo kit: clean and textured marks, the original X avatar, exports up to 4096 px, and `CLAUDE-HANDOFF.md`, which explains each file. |
 | `src/assets/logo-header.webp` | The header mark: `brand/header-logo-textured.svg` rendered at 3x (123x96), as a lossless WebP (4.7 KB; the same pixels as a PNG were 8.7 KB). The SVG is 449 KB of particles, too heavy for a 32 px logo. Imported by `Page.astro`, so its name carries a hash. |
 | `public/favicon.svg` | `brand/favicon.svg`: the clean mark, because grain turns to noise at 16-32 px. `public/favicon-96.png` is the same mark as PNG for clients that skip SVG icons, rendered with `sips -s format png -z 96 96 brand/favicon.svg --out public/favicon-96.png`. `public/apple-touch-icon.png` is the textured X avatar at 180 px, and the Organization logo in the JSON-LD. |
 | `public/tools/residue/logo-dark.svg` | residue's mark for a dark background, copied unchanged from `site/public/logo-dark.svg` in whiteheap/residue at c49d1b4 |
+| `astro.config.mjs` | Astro's settings. React is registered for the build only: it renders the Kumo components into HTML, and its client runtime is never built. A component that must run in the browser needs `react()` registered instead. |
 | `wrangler.jsonc` | The site Worker: the assets directory, the 404 page for unknown paths, and the whiteheap.com custom domain |
 | `www/` | The Worker that redirects www.whiteheap.com to whiteheap.com |
 | `public/_headers` | Security, cache and text-type headers, applied by Cloudflare to every asset response. Astro adds the Content Security Policy as a `<meta>` tag at build time. |
@@ -72,6 +90,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `public/.well-known/security.txt` | How to report a vulnerability: privately, through GitHub, on the repository it concerns. The check fails once `Expires` is 30 days away or less; each year, set it 11 months ahead. |
 | `public/70908b6d7e362f6f50b85609b145b9d3.txt` | The IndexNow key file. The key is public by design, and must equal `INDEXNOW_KEY` in `scripts/site.mjs`. |
 | `scripts/check.mjs` | The site check behind `pnpm build`, `pnpm run check` and `pnpm run smoke` |
+| `scripts/fonts.mjs`, `scripts/woff2.mjs` | `pnpm run fonts`, which cuts the fonts again, and the reader of which characters a WOFF2 font holds, which it and the check share |
 | `scripts/deploy.mjs`, `scripts/indexnow.mjs` | `pnpm run deploy`, and the IndexNow announcement it makes |
 | `scripts/site.mjs` | What the scripts share: the origin, the Organization `@id`, the IndexNow key and the shortest HSTS max-age the smoke check accepts |
 

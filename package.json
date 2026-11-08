@@ -9,6 +9,7 @@
     "build": "astro build && node scripts/check.mjs",
     "check": "node scripts/check.mjs",
     "smoke": "node scripts/check.mjs --live",
+    "fonts": "node scripts/fonts.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "node scripts/deploy.mjs",
@@ -17,7 +18,6 @@
   "dependencies": {
     "@astrojs/react": "^7.1.4",
     "@cloudflare/kumo": "^2.17.0",
-    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@phosphor-icons/react": "^2.1.10",
     "@tailwindcss/vite": "^4.3.4",
     "astro": "^7.4.7",

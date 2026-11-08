@@ -4,10 +4,8 @@
  * footer. A page puts its own head tags in the `head` slot and its <main> in
  * the default slot.
  */
-// Latin only: the pages are in English. The other subsets were 16 files in
-// dist/ and 8 @font-face rules that no page used.
-import "@fontsource/ibm-plex-mono/latin-400.css";
-import "@fontsource/ibm-plex-mono/latin-500.css";
+// IBM Plex Mono 400 and 500, cut to the characters the pages draw.
+import "../styles/fonts.css";
 import "../styles/global.css";
 import { LinkButton } from "@cloudflare/kumo";
 import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // Checks whiteheap.com against the Whiteheap website SEO standard
-// (https://github.com/whiteheap/research/issues/9). It prints every failure,
-// not only the first, and exits 1 if there is one.
+// (https://github.com/whiteheap/research/issues/9), and that each page's web
+// fonts hold every character it may draw, that every island can hydrate,
+// and, in dist/, that a page, stylesheet or script names every built asset.
+// It prints every failure, not only the first, and exits 1 if there is one.
 //
 //   node scripts/check.mjs          the build in dist/. `pnpm build` runs it.
 //   node scripts/check.mjs --live   https://whiteheap.com as served: the same
@@ -14,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import { parse, walkSync, TEXT_NODE } from "ultrahtml";
 import { querySelector, querySelectorAll } from "ultrahtml/selector";
 import { HSTS_MIN_MAX_AGE, INDEXNOW_KEY, ORGANIZATION_ID, ORIGIN } from "./site.mjs";
+import { woff2Codepoints } from "./woff2.mjs";
 
 const live = process.argv.includes("--live");
 const HOME = `${ORIGIN}/`;
@@ -106,7 +109,7 @@ function pngSize(bytes) {
 
 // ---------------------------------------------------------------- HTML
 
-const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00a0" };
+const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00a0", copy: "\u00a9" };
 const decode = (text) =>
   text.replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, (entity, name) => {
     if (name[0] !== "#") return ENTITIES[name.toLowerCase()] ?? entity;
@@ -220,8 +223,34 @@ async function checkDocument(where, doc) {
   for (const img of all(doc, "img")) {
     expect(attr(img, "alt") !== undefined, where, `<img src="${attr(img, "src")}"> has no alt`);
   }
-  await checkStyled(where, doc);
+
+  // An island hydrates through its renderer's client script. React renders
+  // the pages at build time only (astro.config.mjs), so a client:* directive
+  // builds an island with no renderer-url, which never hydrates.
+  for (const island of all(doc, "astro-island")) {
+    expect(
+      attr(island, "renderer-url"),
+      where,
+      `<astro-island component-url="${attr(island, "component-url")}"> has no renderer-url, so it never hydrates; to hydrate a component, register react() in astro.config.mjs`,
+    );
+  }
+
+  const css = await stylesheets(where, doc);
+  checkStyled(where, doc, css);
+  await checkFonts(where, doc, css);
   return titles[0];
+}
+
+/** The page's stylesheets, linked and inline, as one text. */
+async function stylesheets(where, doc) {
+  let css = "";
+  for (const link of links(doc, "stylesheet")) {
+    const path = pathOf(attr(link, "href") ?? "");
+    const file = path && (await getOk(path, `${where} stylesheet`));
+    if (file) css += file.body.toString("utf8");
+  }
+  for (const style of all(doc, "style")) css += style.children.map((child) => child.value ?? "").join("");
+  return css;
 }
 
 /** A class as the stylesheet writes it in a selector: `gap-1.5` is `.gap-1\.5`. */
@@ -232,13 +261,7 @@ const classSelector = (name) => `.${name.replace(/[^A-Za-z0-9_-]/g, (c) => `\\${
  * rules only for the classes in the files src/styles/global.css lets it
  * scan, so a Kumo component missing from that list renders unstyled.
  */
-async function checkStyled(where, doc) {
-  let css = "";
-  for (const link of links(doc, "stylesheet")) {
-    const path = pathOf(attr(link, "href") ?? "");
-    const file = path && (await getOk(path, `${where} stylesheet`));
-    if (file) css += file.body.toString("utf8");
-  }
+function checkStyled(where, doc, css) {
   const names = new Set(all(doc, "[class]").flatMap((node) => (attr(node, "class") ?? "").split(/\s+/).filter(Boolean)));
   const unstyled = [...names].filter((name) => {
     const selector = classSelector(name);
@@ -253,6 +276,118 @@ async function checkStyled(where, doc) {
     where,
     `no rule in the stylesheet for class ${unstyled.join(", ")}: add the Kumo component that renders it to the @source list in src/styles/global.css, or use a data- attribute for a script hook`,
   );
+}
+
+// ---------------------------------------------------------------- fonts
+
+const describe = (codepoint) => `U+${codepoint.toString(16).toUpperCase().padStart(4, "0")} (${String.fromCodePoint(codepoint)})`;
+const fromHex = (digits) => {
+  const codepoint = Number.parseInt(digits, 16);
+  return codepoint > 0 && codepoint <= 0x10ffff ? String.fromCodePoint(codepoint) : "�";
+};
+/** A script's text with its \u{...}, \uXXXX and \xXX escapes read. */
+const scriptText = (text) => text.replace(/\\u\{([0-9a-f]+)\}|\\u([0-9a-f]{4})|\\x([0-9a-f]{2})/gi, (_, a, b, c) => fromHex(a ?? b ?? c));
+/** A stylesheet's text with its \XXXXXX escapes read. */
+const styleText = (text) => text.replace(/\\([0-9a-f]{1,6})\s?/gi, (_, digits) => fromHex(digits));
+// Whitespace a font draws nothing for: tab, line feed, form feed, carriage return.
+const UNDRAWN = new Set([0x09, 0x0a, 0x0c, 0x0d]);
+const scripts = new Map();
+
+/** A same-origin script and each script it imports, by path, read once a run. */
+async function scriptAndImports(path, where, found = new Map()) {
+  if (!path || found.has(path)) return found;
+  if (!scripts.has(path)) {
+    const file = await getOk(path, `${where} script`);
+    scripts.set(path, file ? file.body.toString("utf8") : "");
+  }
+  const text = scripts.get(path);
+  found.set(path, text);
+  for (const [, specifier] of text.matchAll(/(?:\bfrom\s*|\bimport\s*\(?\s*)["']([^"']+)["']/g)) {
+    await scriptAndImports(pathOf(new URL(specifier, new URL(path, ORIGIN)).href), where, found);
+  }
+  return found;
+}
+
+/**
+ * The characters a page may draw in a web font: its body text and its alt
+ * and placeholder text, entities read; every character of its scripts,
+ * inline, loaded and imported, escapes read, since a script may write any
+ * string it holds; and every character of its stylesheets, for generated
+ * content. The head is left out: a browser draws the title in its own font.
+ */
+async function pageCharacters(where, doc, css) {
+  let text = styleText(css);
+  const unknown = new Set();
+  const read = (value) => {
+    for (const [entity, name] of value.matchAll(/&([a-z][a-z0-9]*);/gi)) {
+      if (!(name.toLowerCase() in ENTITIES)) unknown.add(entity);
+    }
+    return decode(value);
+  };
+  walkSync(one(doc, "body") ?? doc, (node) => {
+    if (node.type === TEXT_NODE) {
+      const parent = node.parent?.name;
+      if (parent === "script" && attr(node.parent, "type") === "application/ld+json") return;
+      text += parent === "script" ? scriptText(node.value) : parent === "style" ? styleText(node.value) : read(node.value);
+    } else if (node.attributes) {
+      for (const name of ["alt", "placeholder"]) {
+        if (node.attributes[name] !== undefined) text += read(node.attributes[name]);
+      }
+    }
+  });
+  for (const script of all(doc, "script[src]")) {
+    for (const source of (await scriptAndImports(pathOf(attr(script, "src")), where)).values()) text += scriptText(source);
+  }
+  const codepoints = new Set();
+  for (const character of text) {
+    const codepoint = character.codePointAt(0);
+    if (!UNDRAWN.has(codepoint)) codepoints.add(codepoint);
+  }
+  return { codepoints, unknown: [...unknown] };
+}
+
+const fontCodepoints = new Map();
+
+/**
+ * Each web font the page loads holds every character the page may draw. The
+ * fonts are cut to a few characters (scripts/fonts.mjs), and the browser
+ * draws a character a font lacks in the next font of the stack.
+ */
+async function checkFonts(where, doc, css) {
+  const { codepoints, unknown } = await pageCharacters(where, doc, css);
+  expect(unknown.length === 0, where, `has ${unknown.join(", ")}, an entity this check cannot read: write the character, or its numeric entity`);
+  const faces = [...css.matchAll(/@font-face\s*\{([^}]*)\}/g)].map(([, block]) => ({
+    family: block.match(/font-family:\s*([^;]+)/)?.[1].trim().replace(/^["']|["']$/g, ""),
+    weight: block.match(/font-weight:\s*([^;]+)/)?.[1].trim() ?? "400",
+    url: block.match(/url\(\s*["']?([^"')]+\.woff2)["']?\s*\)/)?.[1],
+  }));
+  expect(
+    faces.length > 0 && faces.every((face) => face.url),
+    where,
+    "every @font-face needs a WOFF2 source, and there must be one: this check reads the fonts the page loads",
+  );
+  for (const face of faces.filter((f) => f.url)) {
+    const path = pathOf(face.url);
+    const font = `${face.family} ${face.weight} (${path})`;
+    if (!fontCodepoints.has(path)) {
+      const file = await getOk(path, `${where} font`);
+      let held = null;
+      try {
+        held = file && woff2Codepoints(file.body);
+      } catch (error) {
+        expect(false, font, `cannot be read: ${error.message}`);
+      }
+      fontCodepoints.set(path, held);
+    }
+    const held = fontCodepoints.get(path);
+    if (!held) continue;
+    const missing = [...codepoints].filter((codepoint) => !held.has(codepoint)).sort((a, b) => a - b);
+    expect(
+      missing.length === 0,
+      where,
+      `has ${missing.map(describe).join(", ")}, which ${font} lacks: write each in ASCII, or add each to UNICODES in scripts/fonts.mjs, run pnpm run fonts, then pnpm build`,
+    );
+  }
 }
 
 const ogImageSizes = new Map();
@@ -605,6 +740,27 @@ async function checkDeclaredHeaders() {
   expect(/"not_found_handling"\s*:\s*"404-page"/.test(wrangler), "wrangler.jsonc", 'assets need "not_found_handling": "404-page"');
 }
 
+/**
+ * In dist/: another built file names each file in _astro/, so the build
+ * ships nothing that no reader loads. Astro builds every renderer's client
+ * entrypoint, used or not: React's was 220,749 bytes no page asked for.
+ */
+async function checkBuiltAssets() {
+  const files = (await readdir(dist, { recursive: true })).map((file) => file.split("\\").join("/"));
+  const texts = [];
+  for (const file of files.filter((name) => /\.(html|css|js|mjs|json|xml|txt|svg)$/.test(name) || name === "_headers")) {
+    texts.push([file, await readFile(new URL(file, dist), "utf8")]);
+  }
+  for (const file of files.filter((name) => name.startsWith("_astro/"))) {
+    const name = file.slice("_astro/".length);
+    expect(
+      texts.some(([other, text]) => other !== file && text.includes(name)),
+      `dist/${file}`,
+      "no page, stylesheet or script names it, so no reader loads it: find what emits it and stop it",
+    );
+  }
+}
+
 // ---------------------------------------------------------------- live only
 
 const typeOf = (file) => (file.headers.get("content-type") ?? "").toLowerCase().replace(/\s+/g, "");
@@ -726,6 +882,7 @@ if (live) {
   await checkJsonLdUrls(jsonLdUrls);
 } else {
   await checkDeclaredHeaders();
+  await checkBuiltAssets();
 }
 
 const target = live ? ORIGIN : fileURLToPath(dist);
