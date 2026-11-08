@@ -490,8 +490,8 @@ export function start(canvas: HTMLCanvasElement): void {
     if (L) advance(L, dt, seed);
     render();
     // Sleep until 6 ms before the next frame is due, then wait for the
-    // display, so frames stay on its beat: at 60, 90, 120 or 144 Hz the next
-    // display frame after that is the due one.
+    // display, so frames stay on its beat: at 60, 90 or 120 Hz the next display
+    // frame after that is the due one, at 144 Hz the one before it.
     timer = window.setTimeout(() => {
       timer = 0;
       if (moving()) raf = requestAnimationFrame(tick);
