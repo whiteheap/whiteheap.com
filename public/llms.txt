@@ -14,7 +14,8 @@ To check that a release file is what Whiteheap built: `gh attestation verify <fi
 
 ## Docs
 
-- [residue's README](https://github.com/whiteheap/residue#readme): how to install it, inspect a worktree, remove one and automate cleanup, and its platforms and limits
+- [residue's README](https://raw.githubusercontent.com/whiteheap/residue/main/README.md): how to install it, inspect a worktree, remove one and automate cleanup, and its platforms and limits, as markdown
+- [residue's llms.txt](https://residue.whiteheap.com/llms.txt): residue for agents, with every doc linked as markdown
 
 ## Source
 
