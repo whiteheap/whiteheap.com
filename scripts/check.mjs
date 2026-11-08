@@ -254,7 +254,67 @@ async function checkDocument(where, doc) {
   const css = await stylesheets(where, doc);
   checkStyled(where, doc, css);
   await checkFonts(where, doc, css);
+  checkContrast(where, css);
   return titles[0];
+}
+
+/** The tokens that color text, each read against --bg. */
+const TEXT_TOKENS = ["--fg", "--muted", "--faint"];
+
+/**
+ * Each text token has 4.5:1 against --bg, the WCAG AA minimum for text under
+ * 24px, measured as a browser paints it: rounded to 8-bit sRGB first. At
+ * full precision oklch(0.56 0 none) is 4.51:1, but it paints #747474,
+ * 4.49:1, and Lighthouse 12 failed every label and footer link for it.
+ */
+function checkContrast(where, css) {
+  const token = (name) => {
+    const found = css.match(
+      new RegExp(`(?:^|[;{\\s])${name}:\\s*oklch\\(([\\d.]+)(%?)\\s+([\\d.]+)\\s+([\\d.]+|none)\\s*\\)`),
+    );
+    if (!found) return null;
+    const [, lightness, percent, chroma, hue] = found;
+    const l = percent ? lightness / 100 : Number(lightness);
+    const angle = hue === "none" ? 0 : (Number(hue) * Math.PI) / 180;
+    return paint(l, chroma * Math.cos(angle), chroma * Math.sin(angle));
+  };
+  const bg = token("--bg");
+  if (!expect(bg, where, "the stylesheet has no oklch() --bg token")) return;
+  for (const name of TEXT_TOKENS) {
+    const fg = token(name);
+    if (!expect(fg, where, `the stylesheet has no oklch() ${name} token`)) continue;
+    const ratio = contrast(fg, bg);
+    expect(
+      ratio >= 4.5,
+      where,
+      `${name} paints rgb(${fg}) on rgb(${bg}), ${ratio.toFixed(2)}:1; text needs 4.5:1`,
+    );
+  }
+}
+
+/** An OKLab color as a browser paints it: 8-bit sRGB channels. */
+function paint(L, a, b) {
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  return [
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+  ].map((linear) => {
+    const c = Math.min(1, Math.max(0, linear));
+    return Math.round(255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055));
+  });
+}
+
+/** The WCAG 2 contrast ratio of two 8-bit sRGB colors. */
+function contrast(x, y) {
+  const luminance = (rgb) =>
+    rgb
+      .map((v) => (v / 255 <= 0.04045 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4))
+      .reduce((sum, c, i) => sum + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const [high, low] = [luminance(x), luminance(y)].sort((p, q) => q - p);
+  return (high + 0.05) / (low + 0.05);
 }
 
 /** The page's stylesheets, linked and inline, as one text. */
