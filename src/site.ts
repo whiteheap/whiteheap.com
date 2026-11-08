@@ -67,10 +67,10 @@ export const home = {
     "Agents now write code, run commands and hold credentials on real machines. Most of the tools around them were built for one person at a keyboard.",
     "They also run on a brittle stack: runtimes and package managers that have to line up, dependency trees nobody has read, install scripts piped straight into a shell. Every link in that chain runs with the agent's access.",
     "Whiteheap builds open-source tools and infrastructure for that shift: for the agents, for the developers who run them, and for the security teams who answer for what they do.",
-    "We build all of it in Rust. The compiler rules out whole classes of memory bugs before anything ships. Each tool is one binary with no runtime to install and as few dependencies as we can manage. Every release carries SHA-256 checksums and a build-provenance attestation, so you can check that what you run is what we built.",
+    "We build it all in Rust, which stops whole kinds of memory bugs before they ship. You can check that every release is exactly what we built.",
   ],
   standard: [
-    "We want absolute excellence in software. Each tool we ship leaves your work alone whenever it cannot tell what is safe to touch, and says what it did in a few words. It uses as little CPU and memory as it can, and we measure both on each code change before it ships.",
+    "We want absolute excellence in software. Our tools never touch your work unless they're sure it's safe, and they tell you what they did in a few words. They're fast and light, and we measure that on every change.",
   ],
   name: [
     "Whiteheap joins white hat and heap. A white hat is a hacker who finds weaknesses so they can be fixed, and works in the open. The heap is the memory a program asks for while it runs.",
