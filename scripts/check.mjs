@@ -220,7 +220,39 @@ async function checkDocument(where, doc) {
   for (const img of all(doc, "img")) {
     expect(attr(img, "alt") !== undefined, where, `<img src="${attr(img, "src")}"> has no alt`);
   }
+  await checkStyled(where, doc);
   return titles[0];
+}
+
+/** A class as the stylesheet writes it in a selector: `gap-1.5` is `.gap-1\.5`. */
+const classSelector = (name) => `.${name.replace(/[^A-Za-z0-9_-]/g, (c) => `\\${c}`)}`;
+
+/**
+ * Every class on the page has a rule in its stylesheets. Tailwind writes
+ * rules only for the classes in the files src/styles/global.css lets it
+ * scan, so a Kumo component missing from that list renders unstyled.
+ */
+async function checkStyled(where, doc) {
+  let css = "";
+  for (const link of links(doc, "stylesheet")) {
+    const path = pathOf(attr(link, "href") ?? "");
+    const file = path && (await getOk(path, `${where} stylesheet`));
+    if (file) css += file.body.toString("utf8");
+  }
+  const names = new Set(all(doc, "[class]").flatMap((node) => (attr(node, "class") ?? "").split(/\s+/).filter(Boolean)));
+  const unstyled = [...names].filter((name) => {
+    const selector = classSelector(name);
+    // The selector, not followed by more of a longer class name.
+    for (let at = css.indexOf(selector); at !== -1; at = css.indexOf(selector, at + 1)) {
+      if (!/[A-Za-z0-9_\\-]/.test(css[at + selector.length] ?? "")) return false;
+    }
+    return true;
+  });
+  expect(
+    unstyled.length === 0,
+    where,
+    `no rule in the stylesheet for class ${unstyled.join(", ")}: add the Kumo component that renders it to the @source list in src/styles/global.css, or use a data- attribute for a script hook`,
+  );
 }
 
 const ogImageSizes = new Map();

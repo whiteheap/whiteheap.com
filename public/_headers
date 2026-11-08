@@ -14,3 +14,8 @@
 # they are text/plain with no charset; RFC 9116 asks for utf-8 on security.txt.
 /*.txt
   Content-Type: text/plain; charset=utf-8
+
+# A tool's mark: a returning reader keeps it a day without asking again. Its
+# name carries no hash, and a day-old mark still fits the page.
+/tools/*
+  Cache-Control: public, max-age=86400

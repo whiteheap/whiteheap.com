@@ -5,16 +5,18 @@
  * sheets above it settle down, and a new sheet gathers on top.
  *
  * It is the hero of https://residue.whiteheap.com, ported from whiteheap/residue
- * `site/public/hero.js` at c49d1b4. The drawing and its timing are the same.
+ * `site/public/hero.js` at c49d1b4, with the frame scheduling of
+ * whiteheap/residue#87. The drawing and its timing are the same.
  * Here the stack centers in a canvas of its own; residue's site fits it into
  * the room its text leaves. Change the two together.
  *
  * The canvas holds one pixel per cell and CSS scales it up with
  * `image-rendering: pixelated`. A frame is a function of the time t alone, so
- * nothing accumulates between frames. It draws at most 30 frames a second
- * while something moves and 10 while the stack rests, stops while off screen
- * or in a hidden tab, and draws one still frame, the whole stack at rest, for
- * readers who prefer reduced motion.
+ * nothing accumulates between frames. It draws 30 frames a second while
+ * something moves and 10 while the stack rests, and sleeps on a timer between
+ * two frames, so it does not wake on the display frames it skips. It stops
+ * while off screen or in a hidden tab, and draws one still frame, the whole
+ * stack at rest, for readers who prefer reduced motion.
  */
 
 const CELL = 2;
@@ -365,6 +367,7 @@ export function start(canvas: HTMLCanvasElement): void {
   let pixels: Uint32Array | null = null;
   let visible = true;
   let raf = 0;
+  let timer = 0;
   let last = 0;
   let t = START;
 
@@ -394,19 +397,26 @@ export function start(canvas: HTMLCanvasElement): void {
   const tick = (now: number) => {
     raf = 0;
     if (!moving()) return;
+    // A long gap (a stalled tab) moves the stack at most 0.1 s.
+    t += last ? Math.min(0.1, (now - last) / 1000) : 0;
+    last = now;
+    render();
     const tau = t % CYCLE;
     const resting = tau < REST || tau > ARRIVE_AT + ARRIVE;
-    if (!last || now - last >= (resting ? 98 : 31)) {
-      // A long gap (a stalled tab) moves the stack at most 0.1 s.
-      t += last ? Math.min(0.1, (now - last) / 1000) : 0;
-      last = now;
-      render();
-    }
-    raf = requestAnimationFrame(tick);
+    // Sleep until 6 ms before the next frame is due, then wait for the
+    // display, so frames stay on its beat (at 60, 90, 120 or 144 Hz the next
+    // display frame after that is the due one) and skipped ones cost nothing.
+    timer = window.setTimeout(
+      () => {
+        timer = 0;
+        if (moving()) raf = requestAnimationFrame(tick);
+      },
+      (resting ? 100 : 1000 / 30) - 6,
+    );
   };
 
   const run = () => {
-    if (raf || !moving()) return;
+    if (raf || timer || !moving()) return;
     last = 0;
     raf = requestAnimationFrame(tick);
   };
