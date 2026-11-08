@@ -1,4 +1,4 @@
-Whiteheap builds open-source tools and infrastructure for agents, developers and security teams, all in Rust. Agents now write code, run commands and hold credentials on real machines, and most of the tools around them were built for one person at a keyboard. Whiteheap builds for that shift.
+Whiteheap builds open-source tools and infrastructure for agents, developers and security teams. Agents now write code, run commands and hold credentials on real machines, but most developer tools were made for a person typing commands, not an agent running them. Whiteheap builds for that shift.
 
 ## Who builds it
 
@@ -12,7 +12,7 @@ Whiteheap is built by [Trevor I. Lasn](https://www.trevorlasn.com), who also bui
 
 Each tool is one binary with no runtime to install and as few dependencies as we can manage: residue depends on one crate, `libc`. We measure the CPU and memory a tool uses on each code change before it ships.
 
-Every release carries SHA-256 checksums and a GitHub build-provenance attestation. To check that a release file is what Whiteheap built, run `gh attestation verify` on it with `--repo whiteheap/<tool>`. residue's source is under the MIT license.
+Every release carries SHA-256 checksums and a GitHub build-provenance attestation. To check that a release file is what Whiteheap built, run `gh attestation verify` on it; [residue's install guide](https://github.com/whiteheap/residue-cli/blob/main/docs/installation.md#release-archives-and-packages) has the exact command. residue's source is under the MIT license.
 
 ## The name
 
