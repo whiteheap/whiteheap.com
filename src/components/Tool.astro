@@ -7,6 +7,7 @@
  */
 import { LinkButton } from "@cloudflare/kumo";
 import { CheckIcon, CopyIcon, GithubLogoIcon, GlobeIcon } from "@phosphor-icons/react";
+import { decorative } from "./decorative";
 
 interface Props {
   /** The tool's name, spelled as its repository spells it. */
@@ -101,12 +102,12 @@ const address = (url: string) => url.replace(/^https?:\/\//, "");
       <div class="tool-links">
         {
           website && (
-            <LinkButton href={website} variant="secondary" icon={GlobeIcon}>
+            <LinkButton href={website} variant="secondary" icon={decorative(GlobeIcon)}>
               {address(website)}
             </LinkButton>
           )
         }
-        <LinkButton href={repository} variant="secondary" icon={GithubLogoIcon}>
+        <LinkButton href={repository} variant="secondary" icon={decorative(GithubLogoIcon)}>
           {address(repository)}
         </LinkButton>
       </div>

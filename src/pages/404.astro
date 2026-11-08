@@ -1,0 +1,21 @@
+---
+// Served with status 404 for any address with no file behind it
+// (`not_found_handling` in wrangler.jsonc). Not in the sitemap, no canonical.
+import { LinkButton, Text } from "@cloudflare/kumo";
+import { HouseIcon } from "@phosphor-icons/react";
+import { decorative } from "../components/decorative";
+import Page from "../layouts/Page.astro";
+---
+
+<Page title="Whiteheap · page not found">
+  <main class="not-found wrap">
+    <h1 class="hero-title">page not found</h1>
+    <div class="prose">
+      <Text size="lg">
+        There is no page at this address. Whiteheap's tools are on the home page, each with its
+        install command and its source.
+      </Text>
+    </div>
+    <LinkButton href="/" variant="secondary" icon={decorative(HouseIcon)}>whiteheap.com</LinkButton>
+  </main>
+</Page>

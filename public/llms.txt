@@ -1,14 +1,26 @@
 # Whiteheap
 
-> Open-source tools and infrastructure for agents, developers and security teams, all written in Rust.
+> Whiteheap builds open-source tools and infrastructure for agents, developers and security teams, all in Rust. Each tool is one binary with no runtime to install, and every release carries SHA-256 checksums and a GitHub build-provenance attestation.
 
-Each tool is one binary with no runtime to install. Every release carries SHA-256 checksums and a GitHub build-provenance attestation (`gh attestation verify <file> --repo whiteheap/<tool>`).
+To check that a release file is what Whiteheap built: `gh attestation verify <file> --repo whiteheap/<tool>`.
 
 ## Tools
 
-- [residue](https://residue.whiteheap.com): Reclaim your storage from Git worktrees, automatically and safely. residue removes a worktree only when nothing in it would be lost, whichever coding agent left it. One Rust binary with one dependency (`libc`), for macOS, Linux and FreeBSD. Repository: https://github.com/whiteheap/residue. Install: `brew install whiteheap/tap/residue`
+- [residue](https://residue.whiteheap.com/): Reclaim your storage from Git worktrees, automatically and safely. residue removes a worktree only when nothing in it would be lost, whichever coding agent left it. One Rust binary with one dependency (`libc`), for macOS, Linux and FreeBSD.
 
-## Links
+## Install
 
-- [GitHub](https://github.com/whiteheap)
-- [X](https://x.com/whiteheaphq)
+- [residue's install script](https://residue.whiteheap.com/install.sh): `curl -fsSL https://residue.whiteheap.com/install.sh | sh` installs residue and, on macOS and Linux, turns on automatic cleanup. Homebrew alone installs residue without it: `brew install whiteheap/tap/residue`
+
+## Docs
+
+- [residue's README](https://github.com/whiteheap/residue#readme): how to install it, inspect a worktree, remove one and automate cleanup, and its platforms and limits
+
+## Source
+
+- [whiteheap/residue](https://github.com/whiteheap/residue): residue's source and releases
+- [github.com/whiteheap](https://github.com/whiteheap): every Whiteheap repository, this website's included
+
+## Optional
+
+- [Whiteheap on X](https://x.com/whiteheaphq): @whiteheaphq

@@ -1,0 +1,67 @@
+---
+/**
+ * Every page's document: the head tags all pages share, the header and the
+ * footer. A page puts its own head tags in the `head` slot and its <main> in
+ * the default slot.
+ */
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+import "../styles/global.css";
+import { LinkButton } from "@cloudflare/kumo";
+import { GithubLogoIcon, XLogoIcon } from "@phosphor-icons/react";
+import { decorative } from "../components/decorative";
+
+interface Props {
+  /** The page's title. It starts with "Whiteheap · " and no other page has it. */
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-mode="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
+    <title>{title}</title>
+    <slot name="head" />
+    {/* The clean mark as SVG, and as PNG for clients that skip SVG icons. */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <header class="site-header wrap">
+      <a class="wordmark" href="/" aria-label="Whiteheap home">
+        <img src="/logo-header.png" alt="" width="41" height="32" />
+        whiteheap
+      </a>
+      <nav aria-label="Whiteheap elsewhere">
+        <LinkButton href="https://github.com/whiteheap" variant="ghost" icon={decorative(GithubLogoIcon)}>
+          GitHub
+        </LinkButton>
+        <LinkButton
+          href="https://x.com/whiteheaphq"
+          variant="ghost"
+          shape="square"
+          icon={decorative(XLogoIcon)}
+          aria-label="Whiteheap on X"
+        />
+      </nav>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer wrap">
+      <span>&copy; 2026 Whiteheap</span>
+      <nav aria-label="Footer">
+        <a href="https://github.com/whiteheap">GitHub</a>
+        <a href="https://x.com/whiteheaphq">X</a>
+        <a href="https://residue.whiteheap.com">residue</a>
+      </nav>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+# Report a security problem privately, through GitHub, on the repository it
+# concerns: whiteheap.com itself on the first Contact, residue on the second.
+# Please do not open a public issue for it.
+Contact: https://github.com/whiteheap/whiteheap.com/security/advisories/new
+Contact: https://github.com/whiteheap/residue/security/advisories/new
+Expires: 2027-10-08T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://whiteheap.com/.well-known/security.txt
