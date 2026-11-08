@@ -1,6 +1,6 @@
 # Whiteheap
 
-> Whiteheap builds open-source tools and infrastructure for agents, developers and security teams, all in Rust. Each tool is one binary with no runtime to install, and every release carries SHA-256 checksums and a GitHub build-provenance attestation.
+> Whiteheap builds open-source tools and infrastructure for agents, developers and security teams. Each tool is one binary with no runtime to install, and every release carries SHA-256 checksums and a GitHub build-provenance attestation.
 
 To check that a release file is what Whiteheap built: `gh attestation verify <file> --repo whiteheap/<tool>`.
 

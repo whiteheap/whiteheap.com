@@ -5,7 +5,7 @@
 export const ORIGIN = "https://whiteheap.com";
 
 export const description =
-  "Whiteheap builds open-source tools and infrastructure for agents, developers and security teams, all in Rust.";
+  "Whiteheap builds open-source tools and infrastructure for agents, developers and security teams.";
 
 // What public/og.png shows. Write it again when the screenshot is taken again.
 export const ogImageAlt =
@@ -64,13 +64,12 @@ export const home = {
   /** The day its words last changed: /index.md says it, and public/sitemap.xml has it as lastmod. */
   updated: "2026-11-08",
   mission: [
-    "Agents now write code, run commands and hold credentials on real machines. Most of the tools around them were built for one person at a keyboard.",
+    "Agents now write code, run commands and hold credentials on real machines. Most developer tools were made for a person typing commands, not an agent running them.",
     "They also run on a brittle stack: runtimes and package managers that have to line up, dependency trees nobody has read, install scripts piped straight into a shell. Every link in that chain runs with the agent's access.",
     "Whiteheap builds open-source tools and infrastructure for that shift: for the agents, for the developers who run them, and for the security teams who answer for what they do.",
-    "We build it all in Rust, which stops whole kinds of memory bugs before they ship. You can check that every release is exactly what we built.",
   ],
   standard: [
-    "We want absolute excellence in software. Our tools never touch your work unless they're sure it's safe, and they tell you what they did in a few words. They're fast and light, and we measure that on every change.",
+    "We want absolute excellence in software. Our tools never touch your work unless they're sure it's safe, and they tell you what they did in a few words. They're fast and light, and we measure that on every change. You can check that every release is exactly what we built.",
   ],
   name: [
     "Whiteheap joins white hat and heap. A white hat is a hacker who finds weaknesses so they can be fixed, and works in the open. The heap is the memory a program asks for while it runs.",
