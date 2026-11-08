@@ -55,6 +55,11 @@ const CRAWLERS = [
   "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; Claude-SearchBot/1.0; +https://www.anthropic.com",
   "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)",
 ];
+// The default user agents of the HTTP libraries agents and their tools use.
+// Cloudflare's Browser Integrity Check answers Python-urllib with a 403
+// (error 1010), which blocked the ARD conformance tool until the check was
+// turned off for the zone on 2026-11-09 (Security > Settings).
+const AGENT_CLIENTS = ["Python-urllib/3.12", "python-requests/2.32.3", "curl/8.7.1", "Go-http-client/1.1", "node"];
 
 // ---------------------------------------------------------------- results
 
@@ -826,9 +831,13 @@ async function checkRedirects() {
 }
 
 async function checkCrawlers() {
-  const requests = CRAWLERS.flatMap((userAgent) =>
-    ["/", "/robots.txt", "/sitemap.xml", "/llms.txt"].map(async (path) => {
-      const bot = userAgent.match(/(Googlebot|bingbot|OAI-SearchBot|Claude-SearchBot|PerplexityBot)\/[\d.]+/)[0];
+  const agentFiles = ["/llms.txt", "/agents.md", "/.well-known/ard.json", "/.well-known/agent-skills/index.json"];
+  const requests = [
+    ...CRAWLERS.map((userAgent) => [userAgent, ["/", "/robots.txt", "/sitemap.xml", "/llms.txt"]]),
+    ...AGENT_CLIENTS.map((userAgent) => [userAgent, agentFiles]),
+  ].flatMap(([userAgent, paths]) =>
+    paths.map(async (path) => {
+      const bot = userAgent.match(/(Googlebot|bingbot|OAI-SearchBot|Claude-SearchBot|PerplexityBot)\/[\d.]+/)?.[0] ?? userAgent;
       const file = await get(path, { userAgent });
       expect(file.status === 200, `${path} as ${bot}`, `status ${file.status}, expected 200`);
     }),
