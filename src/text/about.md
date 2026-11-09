@@ -11,7 +11,7 @@ Whiteheap is built by [Trevor I. Lasn](https://www.trevorlasn.com), who also bui
 
 ## How we build
 
-No tool needs a runtime installed first, and each has as few dependencies as we can manage: residue is one binary that depends on one crate, `libc`, and residue-ui is a Tauri app with residue inside. We measure the CPU and memory a tool uses on each code change before it ships.
+No tool needs a runtime installed first, and each has as few dependencies as we can manage: residue is one binary that depends on one crate, `libc`, and residue-ui is a Tauri app with residue inside. We measure the CPU and memory a tool uses on every change that could slow it down, before it ships.
 
 Every release carries SHA-256 checksums and a GitHub build-provenance attestation. To check that a release file is what Whiteheap built, run `gh attestation verify` on it; [residue's install guide](https://github.com/whiteheap/residue-cli/blob/main/docs/installation.md#release-archives-and-packages) and [residue-ui's README](https://github.com/whiteheap/residue-ui#check-a-download) have the exact command. The source of both is under the MIT license.
 

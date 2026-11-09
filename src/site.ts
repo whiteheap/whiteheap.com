@@ -107,7 +107,7 @@ export const home = {
     "Whiteheap builds open-source tools and infrastructure for that shift: for the agents, for the developers who run them, and for the security teams who answer for what they do.",
   ],
   standard: [
-    "We want absolute excellence in software. Our tools never touch your work unless they're sure it's safe, and they tell you what they did in a few words. They're fast and light, and we measure that on every change. You can check that every release is exactly what we built.",
+    "We want absolute excellence in software. Our tools never touch your work unless they're sure it's safe, and they tell you what they did in a few words. They're fast and light, and we measure every change that could slow them down. You can check that every release is exactly what we built.",
   ],
   name: [
     "Whiteheap joins white hat and heap. A white hat is a hacker who finds weaknesses so they can be fixed, and works in the open. The heap is the memory a program asks for while it runs.",
