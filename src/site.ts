@@ -87,6 +87,13 @@ export const residueUi = {
 
 export const tools: ToolFacts[] = [residue, residueUi];
 
+/**
+ * A tool's repository as `gh attestation verify --repo` takes it, such as
+ * whiteheap/residue-cli. It is not always whiteheap/<name>: residue's is
+ * residue-cli.
+ */
+export const repositoryName = (tool: ToolFacts) => new URL(tool.repository).pathname.slice(1);
+
 /** The hero's two lines. */
 export const hero = { title: "tools and infra for the agentic era", note: "fast, secure and reliable" };
 

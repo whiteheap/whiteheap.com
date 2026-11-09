@@ -7,7 +7,7 @@
  * The spec puts the API on Document; it moved there from Navigator on
  * 2026-05-27 (webmcp PR #184), so this does not look on navigator.
  */
-import { ORIGIN, skills, tools } from "../site";
+import { ORIGIN, repositoryName, skills, tools } from "../site";
 
 interface ModelContextTool {
   name: string;
@@ -44,7 +44,7 @@ const install = (tool: (typeof tools)[number]) => ({
   note: tool.install.note,
   script: tool.install.script,
   alternative: tool.install.alternative && `${tool.install.alternative.label} ${tool.install.alternative.command}`,
-  verify_a_release_file: `gh attestation verify <file> --repo whiteheap/${tool.name}`,
+  verify_a_release_file: `gh attestation verify <file> --repo ${repositoryName(tool)}`,
 });
 
 const register = (tool: ModelContextTool) => {

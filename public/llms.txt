@@ -2,7 +2,7 @@
 
 > Whiteheap builds open-source tools and infrastructure for agents, developers and security teams. No tool needs a runtime installed first, and every release carries SHA-256 checksums and a GitHub build-provenance attestation.
 
-To check that a release file is what Whiteheap built: `gh attestation verify <file> --repo whiteheap/<tool>`.
+To check that a release file is what Whiteheap built: `gh attestation verify <file> --repo <repository>`, with `whiteheap/residue-cli` for residue and `whiteheap/residue-ui` for residue-ui.
 
 The name joins white hat, a hacker who finds weaknesses so they can be fixed and works in the open, and heap, the memory a program asks for while it runs.
 
