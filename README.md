@@ -86,8 +86,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `brand/` | The Whiteheap logo kit: clean and textured marks, the original X avatar, exports up to 4096 px, and `CLAUDE-HANDOFF.md`, which explains each file. |
 | `src/assets/logo-header.webp` | The header mark: `brand/header-logo-textured.svg` rendered at 3x (123x96), as a lossless WebP (4.7 KB; the same pixels as a PNG were 8.7 KB). The SVG is 449 KB of particles, too heavy for a 32 px logo. Imported by `Page.astro`, so its name carries a hash. |
 | `public/favicon.svg` | `brand/favicon.svg`: the clean mark, because grain turns to noise at 16-32 px. `public/favicon-96.png` is the same mark as PNG for clients that skip SVG icons, rendered with `sips -s format png -z 96 96 brand/favicon.svg --out public/favicon-96.png`. `public/apple-touch-icon.png` is the textured X avatar at 180 px, and the Organization logo in the JSON-LD. |
-| `public/tools/residue/logo-dark.svg` | residue's mark for a dark background, copied unchanged from `site/public/logo-dark.svg` in whiteheap/residue-cli at c49d1b4 |
-| `public/tools/residue-ui/icon.svg` | residue-ui's app icon, residue's mark on a black tile, copied unchanged from `src-tauri/icons/icon.svg` in whiteheap/residue-ui at 924755a |
+| `public/tools/residue/logo-dark.svg` | residue's mark for a dark background, copied unchanged from `site/public/logo-dark.svg` in whiteheap/residue-cli at c49d1b4. residue-ui's card uses it too: the app's icon is this mark on a tile. |
 | `astro.config.mjs` | Astro's settings. React is registered for the build only: it renders the Kumo components into HTML, and its client runtime is never built. A component that must run in the browser needs `react()` registered instead. |
 | `wrangler.jsonc` | The site Worker: the assets directory, the 404 page for unknown paths, and the whiteheap.com custom domain |
 | `www/` | The Worker that redirects www.whiteheap.com to whiteheap.com |

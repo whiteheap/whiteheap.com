@@ -66,11 +66,11 @@ export const residue = {
 } satisfies ToolFacts;
 
 // Each claim matches residue-ui's README (github.com/whiteheap/residue-ui). It
-// has no site, so its entry links its repository. Its mark is residue's: its
-// app icon (src-tauri/icons/icon.svg) puts that mark on a black tile.
+// has no site, so its entry links its repository.
 export const residueUi = {
   name: "residue-ui",
-  logo: "/tools/residue-ui/icon.svg",
+  // The app's icon is residue's mark on a tile, so the card uses the mark.
+  logo: "/tools/residue/logo-dark.svg",
   title: "Reclaim your storage from Git worktrees, in a Mac app.",
   lede: "Every check, size and removal in its window comes from the residue CLI, and nothing moves to the trash until you confirm the plan residue shows.",
   about: "A Tauri app for macOS 13 or later, on Apple silicon or Intel, that needs nothing else: residue is inside.",
