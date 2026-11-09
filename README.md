@@ -65,7 +65,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | Path | What it holds |
 | --- | --- |
 | `src/site.ts` | The facts every page and agent file reads: the description, the hero, the homepage prose, each tool, each agent skill and the text pages. Change a fact here and the HTML, `/index.md`, `/agents.md`, the skills, the ARD manifest and the WebMCP tools all follow. `public/llms.txt` is written by hand; the check holds it to the homepage. |
-| `src/pages/index.astro` | The homepage: its sections, meta tags and the JSON-LD graph, which takes each tool's name, description and website from the same values its card shows |
+| `src/pages/index.astro` | The homepage: its sections, meta tags and the JSON-LD graph, which takes each tool's name, description and website, or its repository when it has no site, from the same values its card shows |
 | `src/pages/[page].astro`, `src/text/` | /about, /contact and /privacy, each written in markdown in `src/text/`. `src/pages/[page].md.ts` serves the same markdown at /about.md and the rest. A new page goes in `textPages` in `src/site.ts` and in the sitemap. |
 | `src/components/PageMeta.astro` | A page's description, canonical, markdown twin, Open Graph and Twitter tags |
 | `src/agents.ts`, `src/pages/index.md.ts`, `src/pages/agents.md.ts` | /index.md, the homepage as markdown, and /agents.md: when an agent should use each tool, how to install it, and where its docs and source are |
@@ -75,9 +75,10 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `src/layouts/Page.astro` | What every page shares: the head basics, icons, header and footer. A page adds its own meta tags in the `head` slot. |
 | `src/components/Hero.astro` | The hero: canvas, tagline and GitHub link |
 | `src/scripts/hero-field.ts` | The hero animation: a grid of tiles that breaks into drifting particles, drawn in black and white at 30 frames a second, with all static work done once per size. It sleeps on a timer between frames, stops while off screen or in a hidden tab, and draws one still frame for readers who prefer reduced motion. |
-| `src/components/Tool.astro` | One tool in the tools section, as a compact copy of its own site's hero: mark and name, art, title and lede, install command with a copy button, and links. Each tool is one `<Tool>`. |
+| `src/components/Tool.astro` | One tool in the tools section, as a compact copy of its own site's hero, or its README's when it has no site: mark and name, art, title and lede, install command with a copy button, and links. Each tool is one `<Tool>`. |
 | `src/components/ResidueStack.astro` | residue's art, for the `hero` slot of its `<Tool>`: a canvas that `src/scripts/residue-stack.ts` draws |
 | `src/scripts/residue-stack.ts` | The residue art: a stack of sheets, one of which now and then loosens into dust while a new one gathers on top. A port of `site/public/hero.js` in whiteheap/residue-cli at c49d1b4, with the frame scheduling of whiteheap/residue-cli#87; change the two together. Like the hero, it stops while off screen and draws one still frame for readers who prefer reduced motion. |
+| `src/components/ResidueUiWindow.astro` | residue-ui's art, for the `hero` slot of its `<Tool>`: the app's window from its README hero, `docs/assets/hero-dark.svg` in whiteheap/residue-ui, as an inline SVG with no script and no motion. Change the two together. |
 | `src/scripts/copy-button.ts` | The copy button beside each install command. Without it the button stays hidden and one click still selects the whole command. |
 | `src/components/decorative.ts` | `decorative(Icon)`: a Phosphor icon for a Kumo `icon` prop, hidden from screen readers |
 | `src/styles/global.css` | Tokens, reset and layout. Kumo's Tailwind styles are imported first. |
@@ -85,7 +86,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | `brand/` | The Whiteheap logo kit: clean and textured marks, the original X avatar, exports up to 4096 px, and `CLAUDE-HANDOFF.md`, which explains each file. |
 | `src/assets/logo-header.webp` | The header mark: `brand/header-logo-textured.svg` rendered at 3x (123x96), as a lossless WebP (4.7 KB; the same pixels as a PNG were 8.7 KB). The SVG is 449 KB of particles, too heavy for a 32 px logo. Imported by `Page.astro`, so its name carries a hash. |
 | `public/favicon.svg` | `brand/favicon.svg`: the clean mark, because grain turns to noise at 16-32 px. `public/favicon-96.png` is the same mark as PNG for clients that skip SVG icons, rendered with `sips -s format png -z 96 96 brand/favicon.svg --out public/favicon-96.png`. `public/apple-touch-icon.png` is the textured X avatar at 180 px, and the Organization logo in the JSON-LD. |
-| `public/tools/residue/logo-dark.svg` | residue's mark for a dark background, copied unchanged from `site/public/logo-dark.svg` in whiteheap/residue-cli at c49d1b4 |
+| `public/tools/residue/logo-dark.svg` | residue's mark for a dark background, copied unchanged from `site/public/logo-dark.svg` in whiteheap/residue-cli at c49d1b4. residue-ui's card uses it too: the app's icon is this mark on a tile. |
 | `astro.config.mjs` | Astro's settings. React is registered for the build only: it renders the Kumo components into HTML, and its client runtime is never built. A component that must run in the browser needs `react()` registered instead. |
 | `wrangler.jsonc` | The site Worker: the assets directory, the 404 page for unknown paths, and the whiteheap.com custom domain |
 | `www/` | The Worker that redirects www.whiteheap.com to whiteheap.com |
