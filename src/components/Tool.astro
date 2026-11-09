@@ -1,9 +1,10 @@
 ---
 /**
- * One Whiteheap tool, as a compact copy of the hero on the tool's own site:
- * its mark and name, its art (the `hero` slot), its GitHub description as a
- * title and a lede, its install command with a copy button, and links to its
- * website and repository. Each tool on the page is one <Tool>.
+ * One Whiteheap tool, as a compact copy of the hero on the tool's own site,
+ * or in its README when it has no site: its mark and name, its art (the
+ * `hero` slot), its GitHub description as a title and a lede, its install
+ * command with a copy button, and links to its website, when it has one, and
+ * its repository. Each tool on the page is one <Tool>.
  */
 import { LinkButton } from "@cloudflare/kumo";
 import { CheckIcon, CopyIcon, GithubLogoIcon, GlobeIcon } from "@phosphor-icons/react";
@@ -26,9 +27,13 @@ interface Props {
   /** How the tool is built and where it runs, in one sentence. */
   about?: string;
   install: {
-    /** The install command, exactly as the tool's README gives it. */
+    /**
+     * The install command, exactly as the tool's README gives it. A command
+     * of several lines, such as a download and then `open`, shows each line
+     * with its own prompt, and the copy button copies them all.
+     */
     command: string;
-    /** The script that command runs, for readers who read it first. */
+    /** The script that command runs, for readers who read it first, when it runs one. */
     script?: string;
     /** What the command does besides installing. Screen readers also hear it on the copy button. */
     note?: string;
@@ -42,6 +47,9 @@ interface Props {
 
 const { name, logo, title, lede, about, install, website, repository } = Astro.props;
 const id = `tool-${name}`;
+// Each line of the command is a <span>, so the stylesheet gives each its own
+// prompt; the newline between two lines is text, so a copy keeps it.
+const commandLines = install.command.split("\n");
 // A link reads as its address without the scheme, as in residue.whiteheap.com,
 // split at each slash. The template puts a <wbr> before each slash, so a label
 // too long for its card wraps there first: github.com/whiteheap, then
@@ -69,7 +77,7 @@ const linkFit = "shrink h-auto min-h-9 pt-1 pb-1.5 wrap-anywhere";
     }
     <div class="tool-head">
       <h3 id={id} class="tool-name">
-        <img src={logo} alt="" width="28" height="28" />
+        <img src={logo} alt="" width="28" height="28" loading="lazy" />
         {name}
       </h3>
       <p class="tool-title">{title}</p>
@@ -78,7 +86,7 @@ const linkFit = "shrink h-auto min-h-9 pt-1 pb-1.5 wrap-anywhere";
     <div class="tool-install">
       <div class="install">
         <div class="command">
-          <pre tabindex="0"><code id={`${id}-command`}>{install.command}</code></pre>
+          <pre tabindex="0"><code id={`${id}-command`}>{commandLines.map((line, i) => <>{i > 0 && "\n"}<span>{line}</span></>)}</code></pre>
           <button
             class="copy"
             type="button"

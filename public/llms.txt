@@ -1,6 +1,6 @@
 # Whiteheap
 
-> Whiteheap builds open-source tools and infrastructure for agents, developers and security teams. Each tool is one binary with no runtime to install, and every release carries SHA-256 checksums and a GitHub build-provenance attestation.
+> Whiteheap builds open-source tools and infrastructure for agents, developers and security teams. No tool needs a runtime installed first, and every release carries SHA-256 checksums and a GitHub build-provenance attestation.
 
 To check that a release file is what Whiteheap built: `gh attestation verify <file> --repo whiteheap/<tool>`.
 
@@ -9,25 +9,30 @@ The name joins white hat, a hacker who finds weaknesses so they can be fixed and
 ## When to use
 
 - [residue](https://residue.whiteheap.com/): use it to remove a Git worktree that a coding agent or you left behind, only when nothing in it would be lost, or to check whether one is safe to remove. At the end of a task, run `residue remove --yes --json "$WORKTREE"` from outside the worktree: exit status 0 means it is gone, 3 means it is still there. Not for creating worktrees or merging branches: [Worktrunk](https://worktrunk.dev) does that. Not for Windows.
+- [residue-ui](https://github.com/whiteheap/residue-ui): for a person on a Mac who wants to see the worktrees under their code folders and what keeps each one, and move the ones that can go to the trash with a click. In a terminal, on Linux or another Unix, or from a script or an agent's last step, use residue. Not for creating worktrees or merging branches.
 
 ## Tools
 
 - [residue](https://residue.whiteheap.com/): Reclaim your storage from Git worktrees, automatically and safely. residue removes a worktree only when nothing in it would be lost, whichever coding agent left it. One Rust binary with one dependency (`libc`), for macOS, Linux and FreeBSD.
+- [residue-ui](https://github.com/whiteheap/residue-ui): Reclaim your storage from Git worktrees, in a Mac app. Every check, size and removal in its window comes from the residue CLI, and nothing moves to the trash until you confirm the plan residue shows. A Tauri app for macOS 13 or later, on Apple silicon or Intel, that needs nothing else: residue is inside.
 
 ## Install
 
 - [residue's install script](https://residue.whiteheap.com/install.sh): `curl -fsSL https://residue.whiteheap.com/install.sh | sh` installs residue and, on macOS and Linux, turns on automatic cleanup. Homebrew alone installs residue without it: `brew install whiteheap/tap/residue`
+- [residue-ui's disk image](https://github.com/whiteheap/residue-ui/releases/latest/download/residue-macos.dmg): `curl -fLO https://github.com/whiteheap/residue-ui/releases/latest/download/residue-macos.dmg`, then `open residue-macos.dmg`, then drag residue to Applications. It is not notarized yet, so macOS may block the first launch: [First launch](https://github.com/whiteheap/residue-ui#first-launch) has the steps.
 
 ## Docs
 
 - [residue's agent skill](https://whiteheap.com/.well-known/agent-skills/residue/SKILL.md): when to use residue, how to remove a worktree at the end of a task, and what each result means
 - [residue's README](https://raw.githubusercontent.com/whiteheap/residue-cli/main/README.md): how to install it, inspect a worktree, remove one and automate cleanup, and its platforms and limits, as markdown
 - [residue's llms.txt](https://residue.whiteheap.com/llms.txt): residue for agents, with every doc linked as markdown
+- [residue-ui's README](https://raw.githubusercontent.com/whiteheap/residue-ui/main/README.md): how to install the app and open it the first time, its screens, the residue command behind each one, and how to uninstall it, as markdown
 - [Whiteheap for agents](https://whiteheap.com/agents.md): when to use each tool, how to install it, and where its docs and source are
 
 ## Source
 
 - [whiteheap/residue-cli](https://github.com/whiteheap/residue-cli): residue's source and releases
+- [whiteheap/residue-ui](https://github.com/whiteheap/residue-ui): residue-ui's source and releases
 - [github.com/whiteheap](https://github.com/whiteheap): every Whiteheap repository, this website's included
 
 ## Optional

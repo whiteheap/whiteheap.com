@@ -7,7 +7,7 @@
  * The spec puts the API on Document; it moved there from Navigator on
  * 2026-05-27 (webmcp PR #184), so this does not look on navigator.
  */
-import { ORIGIN, tools } from "../site";
+import { ORIGIN, skills, tools } from "../site";
 
 interface ModelContextTool {
   name: string;
@@ -24,14 +24,18 @@ declare global {
   }
 }
 
+// A field a tool lacks, such as the website of a tool that has none, is
+// left out rather than sent empty.
 const describe = (tool: (typeof tools)[number]) => ({
   name: tool.name,
   description: `${tool.title} ${tool.lede}`,
   about: tool.about,
   website: tool.website,
   repository: tool.repository,
-  docs_for_agents: tool.llms,
-  agent_skill: `${ORIGIN}/.well-known/agent-skills/${tool.name}/SKILL.md`,
+  docs_for_agents: tool.llms ?? tool.readme,
+  agent_skill: skills.some((skill) => skill.tool === tool)
+    ? `${ORIGIN}/.well-known/agent-skills/${tool.name}/SKILL.md`
+    : undefined,
 });
 
 const install = (tool: (typeof tools)[number]) => ({
@@ -39,7 +43,7 @@ const install = (tool: (typeof tools)[number]) => ({
   command: tool.install.command,
   note: tool.install.note,
   script: tool.install.script,
-  alternative: `${tool.install.alternative.label} ${tool.install.alternative.command}`,
+  alternative: tool.install.alternative && `${tool.install.alternative.label} ${tool.install.alternative.command}`,
   verify_a_release_file: `gh attestation verify <file> --repo whiteheap/${tool.name}`,
 });
 
@@ -52,7 +56,7 @@ register({
   name: "list_whiteheap_tools",
   title: "List Whiteheap's tools",
   description:
-    "Lists each open-source tool Whiteheap ships, with what it does, where it runs, its website, its source and the markdown docs and agent skill an agent should read before using it.",
+    "Lists each open-source tool Whiteheap ships, with what it does, where it runs, its website when it has one, its source, and the markdown docs and the agent skill, when it has one, that an agent should read before using it.",
   inputSchema: { type: "object", properties: {} },
   annotations: { readOnlyHint: true },
   execute: async () => ({ tools: tools.map(describe) }),
@@ -62,7 +66,7 @@ register({
   name: "get_install_command",
   title: "Get a Whiteheap tool's install command",
   description:
-    "Returns the install command for one Whiteheap tool, what that command changes besides installing, the script it runs, the other way to install, and the command that checks a release file's build-provenance attestation.",
+    "Returns the install command for one Whiteheap tool, which may be several lines run in order, what to know about it, the script it runs and the other way to install when there are any, and the command that checks a release file's build-provenance attestation.",
   inputSchema: {
     type: "object",
     properties: { tool: { type: "string", enum: tools.map((tool) => tool.name), description: "The tool's name." } },

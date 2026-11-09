@@ -20,20 +20,31 @@ export interface ToolFacts {
   lede: string;
   about: string;
   install: {
+    /** Word for word from the README. A command of two lines, such as a download and then `open`, runs them in order. */
     command: string;
-    script: string;
+    /** The script the command runs, for a tool that installs with one. */
+    script?: string;
     note: string;
-    alternative: { label: string; command: string };
+    alternative?: { label: string; command: string };
   };
-  website: string;
+  /** The tool's own site, for a tool that has one. */
+  website?: string;
   repository: string;
-  /** Where an agent reads the tool's own docs, as markdown. */
-  llms: string;
+  /** Where an agent reads the tool's own docs, as markdown, for a tool whose site publishes them. */
+  llms?: string;
   readme: string;
+  /**
+   * For a tool with no agent skill: who it is for, and which tool to use
+   * instead, as "When to use" in /agents.md says. A tool with a skill says
+   * this in the skill's description.
+   */
+  whenToUse?: string;
 }
 
 // Each claim matches residue's README (github.com/whiteheap/residue-cli).
-export const residue: ToolFacts = {
+// `satisfies` checks each tool against ToolFacts and keeps the fields it has,
+// so the homepage can read residue.website without a check for undefined.
+export const residue = {
   name: "residue",
   logo: "/tools/residue/logo-dark.svg",
   title: "Reclaim your storage from Git worktrees, automatically and safely.",
@@ -52,9 +63,29 @@ export const residue: ToolFacts = {
   repository: "https://github.com/whiteheap/residue-cli",
   llms: "https://residue.whiteheap.com/llms.txt",
   readme: "https://raw.githubusercontent.com/whiteheap/residue-cli/main/README.md",
-};
+} satisfies ToolFacts;
 
-export const tools: ToolFacts[] = [residue];
+// Each claim matches residue-ui's README (github.com/whiteheap/residue-ui). It
+// has no site, so its entry links its repository. Its mark is residue's: its
+// app icon (src-tauri/icons/icon.svg) puts that mark on a black tile.
+export const residueUi = {
+  name: "residue-ui",
+  logo: "/tools/residue-ui/icon.svg",
+  title: "Reclaim your storage from Git worktrees, in a Mac app.",
+  lede: "Every check, size and removal in its window comes from the residue CLI, and nothing moves to the trash until you confirm the plan residue shows.",
+  about: "A Tauri app for macOS 13 or later, on Apple silicon or Intel, that needs nothing else: residue is inside.",
+  install: {
+    command:
+      "curl -fLO https://github.com/whiteheap/residue-ui/releases/latest/download/residue-macos.dmg\nopen residue-macos.dmg",
+    note: "Then drag residue to Applications. It is not notarized yet, so macOS may block the first launch: click Open Anyway in System Settings > Privacy & Security.",
+  },
+  repository: "https://github.com/whiteheap/residue-ui",
+  readme: "https://raw.githubusercontent.com/whiteheap/residue-ui/main/README.md",
+  whenToUse:
+    "for a person on a Mac who wants to see the worktrees under their code folders and what keeps each one, and move the ones that can go to the trash with a click. In a terminal, on Linux or another Unix, or from a script or an agent's last step, use residue. Not for creating worktrees or merging branches.",
+} satisfies ToolFacts;
+
+export const tools: ToolFacts[] = [residue, residueUi];
 
 /** The hero's two lines. */
 export const hero = { title: "tools and infra for the agentic era", note: "fast, secure and reliable" };
@@ -62,7 +93,7 @@ export const hero = { title: "tools and infra for the agentic era", note: "fast,
 /** The homepage's prose, one string per paragraph: the HTML page and /index.md both render it. */
 export const home = {
   /** The day its words last changed: /index.md says it, and public/sitemap.xml has it as lastmod. */
-  updated: "2026-11-08",
+  updated: "2026-11-09",
   mission: [
     "Agents now write code, run commands and hold credentials on real machines. Most developer tools were made for a person typing commands, not an agent running them.",
     "They also run on a brittle stack: runtimes and package managers that have to line up, dependency trees nobody has read, install scripts piped straight into a shell. Every link in that chain runs with the agent's access.",
@@ -103,21 +134,21 @@ export const skills = [
 export const textPages = {
   about: {
     heading: "about",
-    updated: "2026-11-08",
+    updated: "2026-11-09",
     title: "About Whiteheap",
     description:
-      "Who builds Whiteheap, what it ships, and how each release can be checked: one Rust binary per tool, with SHA-256 checksums and a provenance attestation.",
+      "Who builds Whiteheap, what it ships, and how each release can be checked: SHA-256 checksums and a provenance attestation on every release.",
   },
   contact: {
     heading: "contact",
-    updated: "2026-11-08",
+    updated: "2026-11-09",
     title: "Contact Whiteheap",
     description:
       "How to reach Whiteheap: issues for bugs and feature requests, private security advisories for vulnerabilities, and @whiteheaphq on X.",
   },
   privacy: {
     heading: "privacy",
-    updated: "2026-11-08",
+    updated: "2026-11-09",
     title: "Privacy at Whiteheap",
     description:
       "whiteheap.com sets no cookies and loads no analytics. What a visit sends to Cloudflare, which serves the site, and what residue keeps on your machine.",

@@ -14,7 +14,28 @@ export const frontmatter = (doc: { title: string; description: string; canonical
   `---\ntitle: ${JSON.stringify(doc.title)}\ndescription: ${JSON.stringify(doc.description)}\ncanonical: ${doc.canonical}\nlast-updated: ${doc.updated}\n---\n\n`;
 
 /** When /agents.md last changed in meaning. */
-const agentsUpdated = "2026-11-08";
+const agentsUpdated = "2026-11-09";
+
+/** A command for a line of prose, each of its lines as its own code span: `a`, then `b`. */
+const inlineCommand = (command: string) =>
+  command
+    .split("\n")
+    .map((line) => `\`${line}\``)
+    .join(", then ");
+
+/** The other way to install, for after the note, when the tool has one. */
+const alternative = (install: ToolFacts["install"]) =>
+  install.alternative ? ` ${install.alternative.label} \`${install.alternative.command}\`` : "";
+
+/**
+ * A list item for each label that has a value: a tool with no website has
+ * no Website line. A tool with no llms.txt has its README as its docs.
+ */
+const listed = (items: [string, string | undefined][]) =>
+  items
+    .filter(([, value]) => value)
+    .map(([label, value]) => `- ${label}: ${value}`)
+    .join("\n");
 
 const toolSection = (tool: ToolFacts) => `### ${tool.name}
 
@@ -24,11 +45,13 @@ ${tool.title} ${tool.lede} ${tool.about}
 ${tool.install.command}
 \`\`\`
 
-${tool.install.note} ${tool.install.alternative.label} \`${tool.install.alternative.command}\`
+${tool.install.note}${alternative(tool.install)}
 
-- Website: ${tool.website}
-- Source: ${tool.repository}
-- Docs for agents: ${tool.llms}`;
+${listed([
+  ["Website", tool.website],
+  ["Source", tool.repository],
+  ["Docs for agents", tool.llms ?? tool.readme],
+])}`;
 
 /** /index.md: the homepage, section for section. */
 export const homeMarkdown = () => `${frontmatter({ title: `Whiteheap · ${hero.title}`, description, canonical: `${ORIGIN}/`, updated: home.updated })}# Whiteheap: ${hero.title}
@@ -68,19 +91,23 @@ export const agentsMarkdown = () => `${frontmatter({ title: "Whiteheap for agent
 
 > ${description}
 
-This file is for an agent deciding whether to use a Whiteheap tool. Each tool is one binary with no runtime to install. Every release carries SHA-256 checksums and a GitHub build-provenance attestation.
+This file is for an agent deciding whether to use a Whiteheap tool. No tool needs a runtime installed first. Every release carries SHA-256 checksums and a GitHub build-provenance attestation.
 
 ## When to use
 
-${skills.map((skill) => `- **${skill.tool.name}**: ${skill.description.replace(/^When to use: /, "")} ${skill.notFor}`).join("\n")}
+${[
+  ...skills.map((skill) => `- **${skill.tool.name}**: ${skill.description.replace(/^When to use: /, "")} ${skill.notFor}`),
+  ...tools.filter((tool) => tool.whenToUse).map((tool) => `- **${tool.name}**: ${tool.whenToUse}`),
+].join("\n")}
 
 ## Install
 
 ${tools
-  .map(
-    (tool) =>
-      `- **${tool.name}**: \`${tool.install.command}\`. ${tool.install.note} ${tool.install.alternative.label} \`${tool.install.alternative.command}\`. Read the script first: ${tool.install.script}`,
-  )
+  .map((tool) => {
+    const other = alternative(tool.install);
+    const script = tool.install.script ? ` Read the script first: ${tool.install.script}` : "";
+    return `- **${tool.name}**: ${inlineCommand(tool.install.command)}. ${tool.install.note}${other && `${other}.`}${script}`;
+  })
   .join("\n")}
 
 To check that a release file is what Whiteheap built: \`gh attestation verify <file> --repo whiteheap/<tool>\`.
@@ -88,11 +115,11 @@ To check that a release file is what Whiteheap built: \`gh attestation verify <f
 ## Docs
 
 ${tools
-  .map(
-    (tool) => `- ${tool.name}'s agent skill: ${ORIGIN}${skillUrl(tool.name)}
-- ${tool.name}'s llms.txt, every doc as markdown: ${tool.llms}
-- ${tool.name}'s README: ${tool.readme}`,
-  )
+  .flatMap((tool) => [
+    ...(skills.some((skill) => skill.tool === tool) ? [`- ${tool.name}'s agent skill: ${ORIGIN}${skillUrl(tool.name)}`] : []),
+    ...(tool.llms ? [`- ${tool.name}'s llms.txt, every doc as markdown: ${tool.llms}`] : []),
+    `- ${tool.name}'s README: ${tool.readme}`,
+  ])
   .join("\n")}
 
 ## Source

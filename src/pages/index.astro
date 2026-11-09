@@ -3,9 +3,10 @@ import { Text } from "@cloudflare/kumo";
 import Hero from "../components/Hero.astro";
 import PageMeta from "../components/PageMeta.astro";
 import ResidueStack from "../components/ResidueStack.astro";
+import ResidueUiWindow from "../components/ResidueUiWindow.astro";
 import Tool from "../components/Tool.astro";
 import Page from "../layouts/Page.astro";
-import { description, hero, home, residue } from "../site";
+import { description, hero, home, residue, residueUi } from "../site";
 
 const title = `Whiteheap · ${hero.title}`;
 const url = "https://whiteheap.com/";
@@ -14,8 +15,9 @@ const websiteId = `${url}#website`;
 const residueId = `${new URL(residue.website).href}#software`;
 
 // One graph, on this page only: Whiteheap, this website and page, and each
-// tool on the page with its source. Tool sites name Whiteheap as their
-// publisher by organizationId. Each node is something the page shows.
+// tool on the page, with its source when the tool has a site of its own; a
+// tool without one has its repository as its url. Tool sites name Whiteheap
+// as their publisher by organizationId. Each node is something the page shows.
 // `pnpm run check` holds it to the standard; `pnpm run smoke` fetches each URL.
 const jsonLd = {
   "@context": "https://schema.org",
@@ -66,6 +68,16 @@ const jsonLd = {
       targetProduct: { "@id": residueId },
       publisher: { "@id": organizationId },
     },
+    {
+      "@type": "SoftwareApplication",
+      name: residueUi.name,
+      description: `${residueUi.title} ${residueUi.lede}`,
+      url: residueUi.repository,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "macOS 13 or later",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      publisher: { "@id": organizationId },
+    },
   ],
 };
 ---
@@ -98,6 +110,9 @@ const jsonLd = {
       <div class="tools">
         <Tool {...residue}>
           <ResidueStack slot="hero" />
+        </Tool>
+        <Tool {...residueUi}>
+          <ResidueUiWindow slot="hero" />
         </Tool>
       </div>
     </section>
