@@ -7,6 +7,7 @@ import ResidueStack from "../components/ResidueStack.astro";
 import ResidueUiWindow from "../components/ResidueUiWindow.astro";
 import Tool from "../components/Tool.astro";
 import Page from "../layouts/Page.astro";
+import { inlineHtml } from "../inline";
 import { description, hero, home, residue, residueUi } from "../site";
 
 const title = `Whiteheap · ${hero.title}`;
@@ -100,14 +101,14 @@ Astro.csp?.insertScriptHash(`sha256-${createHash("sha256").update(jsonLdText).di
     <section class="section wrap split" aria-labelledby="mission">
       <h2 id="mission" class="label">mission</h2>
       <div class="prose">
-        {home.mission.map((paragraph) => <Text size="lg">{paragraph}</Text>)}
+        {home.mission.map((paragraph) => <Text size="lg"><Fragment set:html={inlineHtml(paragraph)} /></Text>)}
       </div>
     </section>
 
     <section class="section wrap split" aria-labelledby="standard">
       <h2 id="standard" class="label">standard</h2>
       <div class="prose">
-        {home.standard.map((paragraph) => <Text size="lg">{paragraph}</Text>)}
+        {home.standard.map((paragraph) => <Text size="lg"><Fragment set:html={inlineHtml(paragraph)} /></Text>)}
       </div>
     </section>
 
@@ -126,7 +127,7 @@ Astro.csp?.insertScriptHash(`sha256-${createHash("sha256").update(jsonLdText).di
     <section class="section wrap split" aria-labelledby="name">
       <h2 id="name" class="label">name</h2>
       <div class="prose">
-        {home.name.map((paragraph) => <Text size="lg">{paragraph}</Text>)}
+        {home.name.map((paragraph) => <Text size="lg"><Fragment set:html={inlineHtml(paragraph)} /></Text>)}
       </div>
     </section>
   </main>
