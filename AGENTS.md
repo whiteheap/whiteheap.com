@@ -1,6 +1,6 @@
 # whiteheap.com
 
-One static page, and a page for a missing address (`src/pages/404.astro`); both use the layout in `src/layouts/Page.astro`. Astro builds them; React renders the Kumo components at build time and nothing hydrates in the browser. The client scripts are plain TypeScript in `src/scripts/`: the hero animation (`hero-field.ts`), residue's hero art (`residue-stack.ts`) and the copy button beside each install command (`copy-button.ts`). residue-ui's art is static markup with no script (`src/components/ResidueUiWindow.astro`).
+One static page, and a page for a missing address (`src/pages/404.astro`); both use the layout in `src/layouts/Page.astro`. Astro builds them; React renders the Kumo components at build time and nothing hydrates in the browser. The client scripts are plain TypeScript in `src/scripts/`: the hero animation (`hero-field.ts`), residue's hero art (`residue-stack.ts`) and the copy button beside each install command (`copy-button.ts`). residue-ui's art and the mission's diagram are static markup with no script (`src/components/ResidueUiWindow.astro`, `src/components/Flow.astro`).
 
 ## Rules
 

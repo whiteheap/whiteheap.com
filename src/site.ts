@@ -97,8 +97,15 @@ export const repositoryName = (tool: ToolFacts) => new URL(tool.repository).path
 /** The hero's two lines. */
 export const hero = { title: "tools and infra for the agentic era", note: "fast, secure and reliable" };
 
-/** A section of homepage prose: each block a paragraph, or a list of items. */
-export type Prose = (string | string[])[];
+/**
+ * A diagram in homepage prose: numbered steps, each a short label, a sentence
+ * of markdown and the drawing beside it, a key into src/components/Flow.astro.
+ * The steps are its text: the HTML lists them, and /index.md numbers them.
+ */
+export type Flow = { title: string; steps: { art: "task" | "pile" | "checks" | "removed"; label: string; text: string }[] };
+
+/** A section of homepage prose: each block a paragraph, a list of items, or a diagram. */
+export type Prose = (string | string[] | Flow)[];
 
 /** residue's repository, which holds the evidence for most of the homepage's claims. */
 const residueCli = "https://github.com/whiteheap/residue-cli";
@@ -119,6 +126,15 @@ export const home: { updated: string; mission: Prose; standard: Prose; name: Pro
     "Whiteheap builds open-source tools and infrastructure for that shift: for the agents, for the developers who run them, and for the security teams who answer for what they do. We build it as small tools, each doing one job well enough that an agent can run it unattended. The first two are residue, a command-line tool, and residue-ui, its Mac app, both for one job. More are coming.",
     `The first job is a mess agents leave on every machine they work on: Git worktrees. [Claude Code, Codex and Cursor](${residueCli}#where-it-fits) give each task its own worktree, a full checkout with its own \`node_modules\` and build output, and each sweeps only its own, Codex and Cursor by age and count. The rest pile up: [13 on one Mac, 11.6 GB of them in one repository](https://www.trevorlasn.com/blog/residue-cli-reclaim-storage-from-git-worktrees). Clearing them by hand is not safe either: [\`git worktree remove\` deletes ignored files such as \`.env\` without asking](${residueCli}#common-questions).`,
     `[residue](https://residue.whiteheap.com) removes a worktree only when nothing in it would be lost, whichever agent left it, and [residue-ui](https://github.com/whiteheap/residue-ui) shows the same checks in a Mac app. residue runs with no person watching: as a [login service](${residueCli}#automate-cleanup), under launchd or systemd, it removes a worktree once its branch has landed or when the disk runs low, and an agent runs [\`residue remove --yes --json\`](${residueCli}#for-coding-agents) as its last step, which exits 0 when the worktree is gone and 3 when it stays.`,
+    {
+      title: "How residue clears the worktrees agents leave",
+      steps: [
+        { art: "task", label: "task", text: "An agent gives each task its own worktree." },
+        { art: "pile", label: "pile-up", text: "Each agent sweeps only its own, so the rest pile up." },
+        { art: "checks", label: "15 checks", text: "residue checks each one. If any check fails, the worktree stays." },
+        { art: "removed", label: "removed", text: "Git removes it without `--force`, and one command brings it back for 30 days." },
+      ],
+    },
     [
       `For agents: [an agent skill](https://whiteheap.com/.well-known/agent-skills/residue/SKILL.md) that tells Claude Code, Codex and other agents when to run residue, and an exit status that says whether the worktree is gone.`,
       `For developers: disk space back from the worktrees agents leave, taken only when [all 15 checks pass](${residueCli}#what-makes-a-worktree-a-candidate) and [restorable for 30 days](${residueCli}#restore-a-removed-worktree).`,

@@ -1,0 +1,75 @@
+---
+// A diagram in homepage prose (the Flow type in src/site.ts): its steps as an
+// ordered list, each with a drawing and an arrow to the next step. The list is
+// the text a screen reader and /index.md read; the drawings and arrows are
+// hidden from screen readers. The drawings use the 2px cells and the greys of
+// residue-ui's window art (ResidueUiWindow.astro): static markup, no script.
+// On a wide column the steps run in a row with arrows across, on a narrow one
+// in a column with arrows down (global.css, "A diagram in the prose").
+import { inlineHtml } from "../inline";
+import type { Flow } from "../site";
+
+const { flow } = Astro.props as { flow: Flow };
+
+// Every other cell of a rectangle's edge, from its top-left corner: a tile
+// that is gone but can come back.
+const dotted = (x: number, y: number, w: number, h: number) => {
+  const cells: string[] = [];
+  for (let i = 0; i < w; i += 2) cells.push(`M${x + i} ${y}h1v1h-1z`, `M${x + i} ${y + h - 1}h1v1h-1z`);
+  for (let j = 2; j < h - 1; j += 2) cells.push(`M${x} ${y + j}h1v1h-1z`, `M${x + w - 1} ${y + j}h1v1h-1z`);
+  return cells.join("");
+};
+
+// One unit to a cell, in a 32x20 box: [fill, path] pairs, painted in order.
+const art: Record<Flow["steps"][number]["art"], [string, string][]> = {
+  // One worktree, with its name and branch as two lines of text.
+  task: [
+    ["#f5f5f5", "M10 4h13v13h-13z"],
+    ["#0a0a0a", "M12 6h7v1h-7zM12 8h4v1h-4z"],
+  ],
+  // Worktrees of every size, side by side, as residue-ui's map draws them.
+  pile: [
+    ["#f5f5f5", "M3 3h8v7h-8zM21 3h8v5h-8z"],
+    ["#8a8a8a", "M12 3h8v9h-8zM21 9h8v8h-8z"],
+    ["#666666", "M3 11h8v6h-8zM12 13h8v4h-8z"],
+  ],
+  // A worktree and its 15 checks, five by three.
+  checks: [
+    ["#1f1f1f", "M8 4h16v12h-16z"],
+    ["#4a4a4a", "M7 3h18v1h-18zM7 16h18v1h-18zM7 4h1v12h-1zM24 4h1v12h-1z"],
+    [
+      "#f5f5f5",
+      "M9 5h2v2h-2zM12 5h2v2h-2zM15 5h2v2h-2zM18 5h2v2h-2zM21 5h2v2h-2zM9 9h2v2h-2zM12 9h2v2h-2zM15 9h2v2h-2zM18 9h2v2h-2zM21 9h2v2h-2zM9 13h2v2h-2zM12 13h2v2h-2zM15 13h2v2h-2zM18 13h2v2h-2zM21 13h2v2h-2z",
+    ],
+  ],
+  // The worktree's outline where the worktree was.
+  removed: [["#8a8a8a", dotted(10, 4, 13, 13)]],
+};
+---
+
+<figure class="flow">
+  <figcaption class="flow-title">{flow.title}</figcaption>
+  {/* role="list": Safari drops the list from the accessibility tree once list-style is none. */}
+  <ol class="flow-steps" role="list">
+    {
+      flow.steps.map((step, i) => (
+        <li class="flow-step">
+          <div class="flow-art" aria-hidden="true">
+            <svg class="pixel-art" viewBox="0 0 32 20" shape-rendering="crispEdges">
+              {art[step.art].map(([fill, d]) => (
+                <path fill={fill} d={d} />
+              ))}
+            </svg>
+            <span class="flow-arrow" />
+          </div>
+          <div class="flow-body">
+            <p class="flow-label">
+              <span aria-hidden="true">{i + 1}</span> {step.label}
+            </p>
+            <p class="flow-text" set:html={inlineHtml(step.text)} />
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</figure>
