@@ -1,6 +1,6 @@
 # whiteheap.com
 
-The Whiteheap website: one static page built with [Astro](https://astro.build), [Kumo](https://kumo-ui.com) and Tailwind CSS, served by Cloudflare as a Worker with static assets, the current form of Cloudflare Pages. It meets the Whiteheap [website SEO standard](https://github.com/whiteheap/research/issues/9), and its build fails when it stops meeting it.
+The Whiteheap website: one static page built with [Astro](https://astro.build), [Kumo](https://kumo-ui.com) and Tailwind CSS, served by Cloudflare as a Worker with static assets, the current form of Cloudflare Pages. It meets the Whiteheap website SEO standard, and its build fails when it stops meeting it.
 
 ## Develop
 
