@@ -65,6 +65,7 @@ whiteheap.dev redirects to whiteheap.com through settings on its own Cloudflare 
 | Path | What it holds |
 | --- | --- |
 | `src/site.ts` | The facts every page and agent file reads: the description, the hero, the homepage prose, each tool, each agent skill and the text pages. Change a fact here and the HTML, `/index.md`, `/agents.md`, the skills, the ARD manifest and the WebMCP tools all follow. `public/llms.txt` is written by hand; the check holds it to the homepage. |
+| `src/inline.ts` | Renders the homepage prose, which `src/site.ts` writes as markdown with only links and `code`, into the HTML page; `/index.md` serves the same markdown. Every claim in that prose links to the README section, measurement or post that backs it, and a claim with no public evidence is cut. |
 | `src/pages/index.astro` | The homepage: its sections, meta tags and the JSON-LD graph, which takes each tool's name, description and website, or its repository when it has no site, from the same values its card shows |
 | `src/pages/[page].astro`, `src/text/` | /about, /contact and /privacy, each written in markdown in `src/text/`. `src/pages/[page].md.ts` serves the same markdown at /about.md and the rest. A new page goes in `textPages` in `src/site.ts` and in the sitemap. |
 | `src/components/PageMeta.astro` | A page's description, canonical, markdown twin, Open Graph and Twitter tags |
