@@ -4,7 +4,9 @@
  * or in its README when it has no site: its mark and name, its art (the
  * `hero` slot), its GitHub description as a title and a lede, its install
  * command with a copy button, and links to its website, when it has one, and
- * its repository. Each tool on the page is one <Tool>.
+ * its repository. A tool with a UI also shows a screenshot from its README
+ * (the `shot` slot) between the title and the install command. Each tool on
+ * the page is one <Tool>.
  */
 import { LinkButton } from "@cloudflare/kumo";
 import { CheckIcon, CopyIcon, GithubLogoIcon, GlobeIcon } from "@phosphor-icons/react";
@@ -83,6 +85,8 @@ const linkFit = "shrink h-auto min-h-9 pt-1 pb-1.5 wrap-anywhere";
       <p class="tool-title">{title}</p>
       <p class="tool-lede">{lede}</p>
     </div>
+    {/* A screenshot of the tool at work, from its README, for a tool with a UI: a <figure class="tool-shot"> with alt text, unlike the art. */}
+    <slot name="shot" />
     <div class="tool-install">
       <div class="install">
         <div class="command">
