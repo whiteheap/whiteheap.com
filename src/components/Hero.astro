@@ -1,8 +1,15 @@
 ---
 import { LinkButton } from "@cloudflare/kumo";
-import { GithubLogoIcon } from "@phosphor-icons/react";
+import { ArrowDownIcon, GithubLogoIcon } from "@phosphor-icons/react";
 import { decorative } from "./decorative";
 import { hero } from "../site";
+
+// The way into the page: the tools, filled in the page's foreground so it
+// reads first, then the organization on GitHub. The page is black and white,
+// so the filled button inverts the secondary one rather than taking Kumo's
+// brand color. Kumo merges these over its secondary classes, one family for
+// one family: the fill, the text, the ring and the hover fill.
+const filled = "bg-(color:--fg) !text-(color:--bg) ring-(color:--fg) not-disabled:hover:bg-(color:--muted)";
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -12,9 +19,14 @@ import { hero } from "../site";
       <h1 id="hero-title" class="hero-title">{hero.title}</h1>
       <p class="hero-note">{hero.note}</p>
     </hgroup>
-    <LinkButton href="https://github.com/whiteheap" variant="secondary" icon={decorative(GithubLogoIcon)}>
-      github.com/whiteheap
-    </LinkButton>
+    <div class="hero-actions">
+      <LinkButton href="#tools" variant="secondary" icon={decorative(ArrowDownIcon)} className={filled}>
+        See the tools
+      </LinkButton>
+      <LinkButton href="https://github.com/whiteheap" variant="secondary" icon={decorative(GithubLogoIcon)}>
+        github.com/whiteheap
+      </LinkButton>
+    </div>
   </div>
 </section>
 

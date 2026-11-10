@@ -3,9 +3,17 @@
 import { ORIGIN, description, hero, home, repositoryName, skills, tools, type Prose, type ToolFacts } from "./site";
 import { skillUrl } from "./skills/skills";
 
-/** Homepage prose as markdown: a paragraph as written, a list as "- " items. */
+/** Homepage prose as markdown: a paragraph as written, a list as "- " items, a diagram as its title and numbered steps. */
 const paragraphs = (blocks: Prose) =>
-  blocks.map((block) => (typeof block === "string" ? block : block.map((item) => `- ${item}`).join("\n"))).join("\n\n");
+  blocks
+    .map((block) =>
+      typeof block === "string"
+        ? block
+        : Array.isArray(block)
+          ? block.map((item) => `- ${item}`).join("\n")
+          : `${block.title}:\n\n${block.steps.map((step, i) => `${i + 1}. ${step.label}: ${step.text}`).join("\n")}`,
+    )
+    .join("\n\n");
 
 /**
  * The frontmatter that opens each served markdown document, so an agent reads
