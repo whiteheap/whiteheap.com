@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Checks whiteheap.com against the Whiteheap website SEO standard
-// (https://github.com/whiteheap/research/issues/9), and that each page's web
+// Checks whiteheap.com against the Whiteheap website SEO standard, that no
+// file here links to a private repository, and that each page's web
 // fonts hold every character it may draw, that every island can hydrate,
 // and, in dist/, that a page, stylesheet or script names every built asset.
 // It prints every failure, not only the first, and exits 1 if there is one.
@@ -842,6 +842,26 @@ async function checkBuiltAssets() {
 const typeOf = (file) => (file.headers.get("content-type") ?? "").toLowerCase().replace(/\s+/g, "");
 
 /** Each file's status and type, HSTS, no X-Robots-Tag (standard items 5, 19, 25). */
+// This repository is public. A link to a private Whiteheap repository is a
+// dead link for every reader, and names something that is not theirs to see.
+async function checkNoPrivateLinks() {
+  const root = new URL("../", import.meta.url);
+  const PRIVATE = ["research", "template", "evidence-broker"].map((name) => `github.com/whiteheap/${name}`);
+  const files = ["README.md", "AGENTS.md"];
+  for (const dir of ["scripts", "src", "public"]) {
+    for (const entry of await readdir(new URL(dir, root), { recursive: true, withFileTypes: true })) {
+      if (entry.isFile() && /\.(mjs|ts|astro|md|txt|json|html|css|xml)$/.test(entry.name)) {
+        files.push(`${entry.parentPath.slice(fileURLToPath(root).length)}/${entry.name}`);
+      }
+    }
+  }
+  for (const file of files) {
+    const text = await readFile(new URL(file, root), "utf8");
+    const found = PRIVATE.filter((link) => text.includes(link));
+    expect(found.length === 0, file, `links to a private repository: ${found.join(", ")}`);
+  }
+}
+
 async function checkServed() {
   for (const [path, type] of FILES) {
     const file = await get(path);
@@ -963,6 +983,7 @@ if (live) {
 } else {
   await checkDeclaredHeaders();
   await checkBuiltAssets();
+  await checkNoPrivateLinks();
 }
 
 const target = live ? ORIGIN : fileURLToPath(dist);
