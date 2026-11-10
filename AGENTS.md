@@ -34,7 +34,7 @@ pnpm build
 pnpm exec astro preview --port 4391
 ```
 
-`pnpm build` runs the site check after Astro, and must end with `site check: all N checks passed`. Open the preview at 1440x900 and at 390x844. Check for console errors: the Content Security Policy only applies to the built site, not to `astro dev`. `astro preview` does not apply `public/_headers`; `pnpm exec wrangler dev` serves `dist/` with those headers and with the 404 page's status, as Cloudflare does.
+`pnpm build` runs the site check after Astro, and must end with `site check: all N checks passed`. Every pull request runs it too, in `.github/workflows/ci.yml`, and Dependabot proposes updates to the packages and the pinned actions once a week (`.github/dependabot.yml`). Open the preview at 1440x900 and at 390x844. Check for console errors: the Content Security Policy only applies to the built site, not to `astro dev`. `astro preview` does not apply `public/_headers`; `pnpm exec wrangler dev` serves `dist/` with those headers and with the 404 page's status, as Cloudflare does.
 
 ## Deploy
 

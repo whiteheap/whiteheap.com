@@ -1,0 +1,26 @@
+# Keeps the pinned actions and the packages current: one grouped pull request
+# a week for each, which ci.yml builds and checks. A release must be a week old
+# before it is proposed. A major version comes as its own pull request.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Reads pnpm-lock.yaml.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      packages:
+        patterns: ["*"]
+        update-types: [minor, patch]
