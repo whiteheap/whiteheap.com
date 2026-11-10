@@ -1,9 +1,11 @@
 // The markdown an agent reads about Whiteheap: the homepage's twin and
 // /agents.md, both from the facts in src/site.ts that the HTML shows.
-import { ORIGIN, description, hero, home, repositoryName, skills, tools, type ToolFacts } from "./site";
+import { ORIGIN, description, hero, home, repositoryName, skills, tools, type Prose, type ToolFacts } from "./site";
 import { skillUrl } from "./skills/skills";
 
-const paragraphs = (list: string[]) => list.join("\n\n");
+/** Homepage prose as markdown: a paragraph as written, a list as "- " items. */
+const paragraphs = (blocks: Prose) =>
+  blocks.map((block) => (typeof block === "string" ? block : block.map((item) => `- ${item}`).join("\n"))).join("\n\n");
 
 /**
  * The frontmatter that opens each served markdown document, so an agent reads

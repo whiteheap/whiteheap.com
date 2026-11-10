@@ -301,6 +301,61 @@
     .tool-card:has(> .tool-hero) > .tool-meta {
       grid-area: meta;
     }
+
+    /* A screenshot runs across the whole card, under the title and the art. */
+    .tool-card:has(> .tool-hero):has(> .tool-shot) {
+      grid-template-areas:
+        "head hero"
+        "shot shot"
+        "install install"
+        "meta meta";
+    }
+
+    .tool-card:has(> .tool-hero) > .tool-shot {
+      grid-area: shot;
+    }
+  }
+
+  /* A screenshot from the tool's README (ResidueUiScreenshot.astro). Its
+     width and height attributes reserve its box before the lazy load, so it
+     shifts nothing. */
+  .tool-shot {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0;
+  }
+
+  .tool-shot img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: 0.5rem;
+    outline: 1px solid var(--line);
+    outline-offset: -1px;
+  }
+
+  .tool-shot figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--faint);
+  }
+
+  .tool-shot a {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-color: color-mix(in oklch, currentColor 40%, transparent);
+    text-underline-offset: 0.2em;
+  }
+
+  .tool-shot a:active {
+    text-decoration-color: currentColor;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .tool-shot a:hover {
+      text-decoration-color: currentColor;
+    }
   }
 
   /* The art draws into the room the card gives it and adds no height of its

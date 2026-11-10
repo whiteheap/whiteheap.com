@@ -97,30 +97,39 @@ export const repositoryName = (tool: ToolFacts) => new URL(tool.repository).path
 /** The hero's two lines. */
 export const hero = { title: "tools and infra for the agentic era", note: "fast, secure and reliable" };
 
+/** A section of homepage prose: each block a paragraph, or a list of items. */
+export type Prose = (string | string[])[];
+
 /** residue's repository, which holds the evidence for most of the homepage's claims. */
 const residueCli = "https://github.com/whiteheap/residue-cli";
 
 /**
- * The homepage's prose, one string per paragraph: the HTML page and /index.md
- * both render it. Each string is markdown with links and `code` only, as
- * src/inline.ts reads it. Every claim links to the README section, measurement
- * or post that backs it; a claim with no public evidence is cut, not softened.
+ * The homepage's prose, one string per paragraph, or an array of strings for a
+ * list: the HTML page and /index.md both render it. Each string is markdown
+ * with links and `code` only, as src/inline.ts reads it. Every claim links to
+ * the README section, measurement or post that backs it; a claim with no
+ * public evidence is cut, not softened.
  */
-export const home = {
+export const home: { updated: string; mission: Prose; standard: Prose; name: Prose } = {
   /** The day its words last changed: /index.md says it, and public/sitemap.xml has it as lastmod. */
   updated: "2026-11-10",
   mission: [
     "Agents now write code, run commands and hold credentials on real machines. Most developer tools were made for a person typing commands, not an agent running them.",
     "They also run on a brittle stack: runtimes and package managers that have to line up, dependency trees nobody has read, install scripts piped straight into a shell. Every link in that chain runs with the agent's access.",
-    "Whiteheap builds open-source tools and infrastructure for that shift: for the agents, for the developers who run them, and for the security teams who answer for what they do. Not a platform: small tools, each doing one job well enough that an agent can run it unattended. The first two are out, for one job, and more are coming.",
+    "Whiteheap builds open-source tools and infrastructure for that shift: for the agents, for the developers who run them, and for the security teams who answer for what they do. We build it as small tools, each doing one job well enough that an agent can run it unattended. The first two are residue, a command-line tool, and residue-ui, its Mac app, both for one job. More are coming.",
     `The first job is a mess agents leave on every machine they work on: Git worktrees. [Claude Code, Codex and Cursor](${residueCli}#where-it-fits) give each task its own worktree, a full checkout with its own \`node_modules\` and build output, and each sweeps only its own, Codex and Cursor by age and count. The rest pile up: [13 on one Mac, 11.6 GB of them in one repository](https://www.trevorlasn.com/blog/residue-cli-reclaim-storage-from-git-worktrees). Clearing them by hand is not safe either: [\`git worktree remove\` deletes ignored files such as \`.env\` without asking](${residueCli}#common-questions).`,
-    `[residue](https://residue.whiteheap.com) removes a worktree only when nothing in it would be lost, whichever agent left it, and [residue-ui](https://github.com/whiteheap/residue-ui) shows the same checks in a Mac app. residue runs with no person watching: as a [login service](${residueCli}#automate-cleanup), under launchd or systemd, it removes a worktree once its branch has landed or when the disk runs low, and an agent runs [\`residue remove --yes --json\`](${residueCli}#for-coding-agents) as its last step, which exits 0 when the worktree is gone and 3 when it stays. [Its agent skill](https://whiteheap.com/.well-known/agent-skills/residue/SKILL.md) tells Claude Code, Codex and other agents when to run it. Each tool we ship next is held to the standard below.`,
+    `[residue](https://residue.whiteheap.com) removes a worktree only when nothing in it would be lost, whichever agent left it, and [residue-ui](https://github.com/whiteheap/residue-ui) shows the same checks in a Mac app. residue runs with no person watching: as a [login service](${residueCli}#automate-cleanup), under launchd or systemd, it removes a worktree once its branch has landed or when the disk runs low, and an agent runs [\`residue remove --yes --json\`](${residueCli}#for-coding-agents) as its last step, which exits 0 when the worktree is gone and 3 when it stays.`,
+    [
+      `For agents: [an agent skill](https://whiteheap.com/.well-known/agent-skills/residue/SKILL.md) that tells Claude Code, Codex and other agents when to run residue, and an exit status that says whether the worktree is gone.`,
+      `For developers: disk space back from the worktrees agents leave, taken only when [all 15 checks pass](${residueCli}#what-makes-a-worktree-a-candidate) and [restorable for 30 days](${residueCli}#restore-a-removed-worktree).`,
+      `For security teams: [releases you can verify](${residueCli}/blob/main/docs/installation.md#release-archives-and-packages), an [install script you can read first](https://residue.whiteheap.com/install.sh), and a tool that [sends nothing off the machine](${residueCli}#common-questions) but its service's \`git fetch\` of your own remotes.`,
+    ],
   ],
   standard: [
     "We want absolute excellence in software, so each claim here links to its proof.",
     `residue deletes a worktree only when [all 15 of its checks pass](${residueCli}#what-makes-a-worktree-a-candidate), lets Git do the delete without \`--force\`, and never deletes a branch or a commit. Each removal prints one line that ends with the command that [brings the worktree back, for 30 days](${residueCli}#restore-a-removed-worktree).`,
     `It is one Rust binary with one dependency, \`libc\`, and needs nothing installed but Git. We [measure the time, CPU and memory](${residueCli}/blob/main/CONTRIBUTING.md#performance) of every change that could slow it down: [on main](${residueCli}/blob/main/CONTRIBUTING.md#mains-numbers), \`residue scan\` of four worktrees took 0.32 to 0.35 s, and its service at rest spent under 0.01 s of CPU in five minutes.`,
-    `For security teams: you can [read residue's install script](https://residue.whiteheap.com/install.sh) before you run it, and check that a release is exactly what we built, because every release of [residue](${residueCli}/blob/main/docs/installation.md#release-archives-and-packages) and [residue-ui](https://github.com/whiteheap/residue-ui#check-a-download) carries SHA-256 checksums and a GitHub build-provenance attestation. [residue sends nothing off the machine](${residueCli}#common-questions) but its service's \`git fetch\` of your own remotes, which \`--no-fetch\` turns off.`,
+    `You can [read residue's install script](https://residue.whiteheap.com/install.sh) before you run it, and check that a release is exactly what we built, because every release of [residue](${residueCli}/blob/main/docs/installation.md#release-archives-and-packages) and [residue-ui](https://github.com/whiteheap/residue-ui#check-a-download) carries SHA-256 checksums and a GitHub build-provenance attestation. [residue sends nothing off the machine](${residueCli}#common-questions) but its service's \`git fetch\` of your own remotes, which \`--no-fetch\` turns off.`,
   ],
   name: [
     "Whiteheap joins white hat and heap. A white hat is a hacker who finds weaknesses so they can be fixed, and works in the open. The heap is the memory a program asks for while it runs.",

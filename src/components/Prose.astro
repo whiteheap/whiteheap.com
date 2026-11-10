@@ -1,0 +1,30 @@
+---
+/**
+ * One section of the homepage's prose from src/site.ts: a string is a
+ * paragraph, an array of strings a list. Each string's links and `code`
+ * become HTML through src/inline.ts; /index.md serves the same markdown.
+ */
+import { Text } from "@cloudflare/kumo";
+import { inlineHtml } from "../inline";
+import type { Prose } from "../site";
+
+const { blocks } = Astro.props as { blocks: Prose };
+---
+
+<div class="prose">
+  {
+    blocks.map((block) =>
+      typeof block === "string" ? (
+        <Text size="lg">
+          <Fragment set:html={inlineHtml(block)} />
+        </Text>
+      ) : (
+        <ul>
+          {block.map((item) => (
+            <li set:html={inlineHtml(item)} />
+          ))}
+        </ul>
+      ),
+    )
+  }
+</div>
