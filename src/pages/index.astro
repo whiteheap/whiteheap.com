@@ -1,4 +1,5 @@
 ---
+import { createHash } from "node:crypto";
 import { Text } from "@cloudflare/kumo";
 import Hero from "../components/Hero.astro";
 import PageMeta from "../components/PageMeta.astro";
@@ -80,12 +81,17 @@ const jsonLd = {
     },
   ],
 };
+
+// The JSON-LD is an inline <script>, and the page's CSP allows only scripts
+// it names by hash, so its hash goes into the policy: the exact text below.
+const jsonLdText = JSON.stringify(jsonLd);
+Astro.csp?.insertScriptHash(`sha256-${createHash("sha256").update(jsonLdText).digest("base64")}`);
 ---
 
 <Page title={title}>
   <Fragment slot="head">
     <PageMeta title={title} description={description} path="/" markdown="/index.md" />
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={jsonLdText} />
   </Fragment>
 
   <main>
