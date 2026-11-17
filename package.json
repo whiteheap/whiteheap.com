@@ -17,20 +17,20 @@
     "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
-    "@astrojs/react": "^7.1.4",
-    "@cloudflare/kumo": "^2.17.0",
+    "@astrojs/react": "^7.1.5",
+    "@cloudflare/kumo": "^2.18.0",
     "@phosphor-icons/react": "^2.1.10",
-    "@tailwindcss/vite": "^4.3.4",
-    "astro": "^7.4.7",
+    "@tailwindcss/vite": "^4.3.5",
+    "astro": "^7.4.8",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "tailwindcss": "^4.3.4"
+    "tailwindcss": "^4.3.5"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "ultrahtml": "^1.7.0",
-    "wrangler": "^4.158.0"
+    "wrangler": "^4.159.0"
   },
   "private": true
 }
